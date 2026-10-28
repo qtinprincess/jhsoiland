@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>中和弦音樂島</title>
+<meta name="description" content="中和國小弦樂團（中和弦）的互動小島：活動預告、團員的一天、作曲家的故事、志工招募。">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+/* Layout: a full-screen illustrated island. Cream UI floats on top: logo card (top-left), tool buttons (right), event card (bottom). */
+:root{
+  --bg:#F6F1E3; --fg:#2E3326; --muted:#5E6450; --card:#FFFDF6; --line:#D8D0B6;
+  --sea:#2F7F7B; --orange:#B8500F; --orange-ink:#FFFFFF; --soft:#DDEBE3;
+  --good:#2E7D46; --shadow:0 1px 2px rgba(40,50,30,.10),0 8px 20px rgba(40,50,30,.14);
+  --stage-a:#9BDAD3; --stage-b:#78C2BC;
+  --f-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121B1B; --fg:#E8EFE6; --muted:#A3B1A3; --card:#1B2726; --line:#2F4040;
+    --sea:#7FD0C8; --orange:#FF9B57; --orange-ink:#1A1206; --soft:#1F3532;
+    --good:#6FD39C; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.35);
+    --stage-a:#12403F; --stage-b:#0C2E31; color-scheme:dark;
+  }
+  :root:not([data-theme="light"]) #land{filter:brightness(.62) saturate(.85)}
+  :root:not([data-theme="light"]) #clouds{opacity:.35}
+}
+:root[data-theme="dark"]{
+  --bg:#121B1B; --fg:#E8EFE6; --muted:#A3B1A3; --card:#1B2726; --line:#2F4040;
+  --sea:#7FD0C8; --orange:#FF9B57; --orange-ink:#1A1206; --soft:#1F3532;
+  --good:#6FD39C; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.35);
+  --stage-a:#12403F; --stage-b:#0C2E31; color-scheme:dark;
+}
+:root[data-theme="dark"] #land{filter:brightness(.62) saturate(.85)}
+:root[data-theme="dark"] #clouds{opacity:.35}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.65;padding-bottom:40px}
+.pad{display:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:760px;margin:0 auto}
+
+/* page: header, event card, a sticky tool bar, then the map itself (nothing floats over the map) */
+.wrap{max-width:560px;margin:0 auto;padding:0 max(12px,env(safe-area-inset-left,0px)) 0 max(12px,env(safe-area-inset-right,0px))}
+.logo{display:flex;gap:10px;align-items:center;padding:max(12px,env(safe-area-inset-top,0px)) 0 10px}
+.mark{width:44px;height:44px;border-radius:13px;background:var(--sea);color:var(--bg);display:grid;place-items:center;flex:none}
+.logo small{display:block;font-size:12px;letter-spacing:.05em;color:var(--muted);line-height:1.3}
+.logo b{display:block;font-family:var(--f-display);font-weight:900;font-size:24px;line-height:1.2}
+.logo em{font-style:normal;color:var(--orange)}
+.bar{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 0;margin:6px 0 8px;background:var(--bg)}
+.bar button{white-space:nowrap;border:1px solid var(--line);border-radius:12px;background:var(--card);min-height:54px;display:grid;place-items:center;align-content:center;gap:1px;font-size:11.5px;font-weight:600;line-height:1.2;padding:0 2px}
+.bar svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bar button[aria-pressed="true"]{background:var(--orange);color:var(--orange-ink);border-color:var(--orange)}
+.bar button:active,.now:active{transform:scale(.97)}
+.stage{background:linear-gradient(var(--stage-a),var(--stage-b));border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+#scene{display:block;width:100%;height:auto}
+.role{grid-template-columns:28px 1fr;cursor:pointer}
+.role input{width:22px;height:22px;accent-color:var(--orange)}
+.bird{display:none}
+
+/* floating labels in the scene */
+.pb{fill:#F5A04A;stroke:#FFF8E6;stroke-width:2}
+.pt{font-family:var(--f-body);font-weight:700;font-size:11.5px;fill:#3A1E04;dominant-baseline:central}
+.pn{font-family:var(--f-body);font-weight:700;font-size:9.5px;fill:#8A3B05;text-anchor:middle;dominant-baseline:central}
+.bt{font-family:var(--f-body);font-weight:700;font-size:11.5px;fill:#7A3A06;text-anchor:middle;dominant-baseline:central}
+
+.il{font-family:var(--f-body);font-weight:700;font-size:11.5px;fill:#2F6F6B;text-anchor:middle;dominant-baseline:central}
+.stem{stroke:#FFF8E6;stroke-width:2;stroke-linecap:round}
+.pill{cursor:pointer;outline:none}
+.pill:hover .pb{fill:#FFB866}
+.pill:focus-visible .pb{stroke:#2E3326;stroke-width:3.5}
+.ring{fill:none;stroke:#FFF8E6;stroke-width:3;transform-box:fill-box;transform-origin:center}
+#mood{pointer-events:none}
+#clouds{pointer-events:none}
+
+/* event card */
+.now{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}
+.now .big{display:grid;justify-items:center;line-height:1.1;min-width:58px}
+.now .big b{font-family:var(--f-display);font-size:38px;color:var(--orange);font-variant-numeric:tabular-nums}
+.now .big b.s{font-size:26px}
+.now .big i{font-style:normal;font-size:12px;color:var(--muted)}
+.now .kk{display:block;font-size:11.5px;letter-spacing:.1em;color:var(--orange);font-weight:700}
+.now .tt{display:block;font-family:var(--f-display);font-weight:900;font-size:16px;line-height:1.3}
+.now .ff{display:block;font-size:13px;color:var(--muted);line-height:1.45}
+.now .go{font-size:24px;color:var(--muted)}
+
+.modes,.simrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted);margin:16px 0 8px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;font-size:13px;min-height:36px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+footer{margin-top:14px;color:var(--muted);font-size:12.5px;line-height:1.7}
+
+@media (prefers-reduced-motion:no-preference){
+  .bob{animation:bob 3.2s ease-in-out infinite alternate}
+  .ring{animation:ring 1.9s ease-out infinite}
+  .cloud{animation:drift 46s ease-in-out infinite alternate}
+  .wv{animation:wv 5s ease-in-out infinite alternate}
+  .tw{animation:tw 1.6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+}
+@media (prefers-reduced-motion:no-preference){
+  .nt{opacity:0;animation:rise 4.5s ease-out infinite}
+  .bat{transform-box:fill-box;transform-origin:0% 100%;animation:bat .8s ease-in-out infinite alternate}
+}
+@media (prefers-reduced-motion:reduce){.nt{opacity:.85}}
+.wk{cursor:pointer}
+@keyframes rise{0%{opacity:0;transform:translate(0,0)}15%{opacity:1}100%{opacity:0;transform:translate(10px,-36px)}}
+@keyframes bat{from{transform:rotate(-28deg)}to{transform:rotate(22deg)}}
+.cmp{display:grid;gap:10px}
+.cmp .box h4{margin:0;font-family:var(--f-display);font-size:17px}
+.cmp .yr{font-size:12.5px;color:var(--muted)}
+.cmp .sp{display:inline-block;font-size:12px;background:var(--soft);color:var(--sea);border-radius:6px;padding:1px 8px;margin:6px 0 0}
+.cmp .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.cmp .row .play{min-height:40px;font-size:13.5px}
+@media (prefers-reduced-motion:no-preference){
+  .sub button.hint{animation:pulse 1.8s ease-in-out infinite}
+  .bird{display:inline;animation:fly 36s linear infinite}
+}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(245,160,74,.5)}}
+@keyframes fly{from{transform:translate(-60px,0)}50%{transform:translate(220px,-14px)}to{transform:translate(480px,0)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(1.3,1.7);opacity:0}}
+@keyframes drift{from{transform:translateX(-50px)}to{transform:translateX(70px)}}
+@keyframes wv{from{transform:translateX(-3px)}to{transform:translateX(3px)}}
+@keyframes tw{from{opacity:.15;transform:scale(.6)}to{opacity:1;transform:scale(1.1)}}
+
+/* sheet */
+.veil{position:fixed;inset:0;background:rgba(8,14,28,.4);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.veil[hidden]{display:none}
+.sheet{background:var(--bg);width:100%;max-width:720px;max-height:92%;overflow-y:auto;border-radius:20px 20px 0 0;
+  padding:16px max(16px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px))}
+.sheet-top{display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:-16px;background:var(--bg);padding:10px 0;margin-top:-10px;z-index:2}
+.sheet-top h2{font-family:var(--f-display);font-size:22px;margin:0;text-wrap:balance}
+.x{border:1px solid var(--line);background:var(--card);border-radius:999px;min-width:44px;min-height:44px;font-size:18px;flex:none}
+.sheet p{margin:8px 0}
+.sheet h3{font-family:var(--f-display);font-size:16px;margin:18px 0 6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.note{font-size:13px;color:var(--muted)}
+.ai{display:inline-block;font-size:11px;letter-spacing:.08em;background:var(--soft);color:var(--sea);border-radius:6px;padding:1px 7px;margin-right:6px}
+.kv{display:grid;grid-template-columns:5.5em 1fr;gap:4px 10px;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:500}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols2 ul{margin:4px 0 0;padding-left:1.1em}
+.cols2 h4{margin:0;font-size:14px;color:var(--sea)}
+.todo{border:1px dashed var(--orange);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:13.5px}
+
+.list{display:grid;gap:8px}
+.li{display:grid;grid-template-columns:2.2em 1fr;gap:12px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:56px;width:100%}
+.li .no{width:2.2em;height:2.2em;border-radius:50%;background:#F5A04A;color:#3A1E04;font-weight:700;font-size:13px;display:grid;place-items:center}
+
+/* timeline */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}
+.tl{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 16px 14px}
+.tl li::before{content:"";position:absolute;left:-22px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--sea);border:2px solid var(--bg)}
+.tl li.next::before{background:var(--orange)}
+.tl .d{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tl .t{font-weight:700}
+.tl .c{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-left:6px;color:var(--muted)}
+.tl p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+
+/* steps */
+.steps{display:grid;gap:8px;list-style:none;padding:0;margin:8px 0}
+.steps li{display:grid;grid-template-columns:4.2em 1fr;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.steps time{font-family:var(--f-display);font-weight:900;font-size:18px;color:var(--orange);font-variant-numeric:tabular-nums}
+.track{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:10px 0 2px}
+.track i{display:block;height:100%;background:var(--orange);width:0;transition:width .3s}
+
+/* instruments */
+.inst{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.inst .box b{font-family:var(--f-display)}
+.inst .box span{display:block;font-size:13px;color:var(--muted)}
+.quiz{display:grid;gap:8px;margin-top:8px}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opt{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:48px;padding:6px 10px;font-weight:500}
+.opt.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 18%,var(--card))}
+.opt.no{border-color:var(--orange)}
+.play{background:var(--orange);color:var(--orange-ink);border:0;border-radius:12px;min-height:48px;font-weight:700;padding:0 16px}
+.quiz .msg{min-height:1.6em;font-weight:500}
+
+/* graph */
+.graph{width:100%;height:auto;max-height:420px;display:block}
+.graph .e{stroke:var(--line);stroke-width:2;transition:stroke .2s,opacity .2s}
+.graph .e.on{stroke:var(--orange);stroke-width:3}
+.graph .dim{opacity:.25}
+.graph .n circle{fill:var(--card);stroke:var(--sea);stroke-width:2}
+.graph .n.sel circle{fill:var(--orange);stroke:var(--orange)}
+.graph .n text{fill:var(--fg);font-size:12px;font-weight:700;text-anchor:middle;font-family:var(--f-body)}
+.graph .n.sel text{fill:var(--orange-ink)}
+.graph .n{cursor:pointer}
+
+/* honors, faq */
+.honor{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:baseline}
+.honor + .honor{margin-top:8px}
+.badge{font-weight:700;color:var(--orange)}
+.faq-in{display:flex;gap:8px;margin:8px 0}
+.faq-in input{flex:1;min-width:0;min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:12px;padding:0 12px;font:inherit}
+.faq-in button{min-height:48px;padding:0 16px;border:0;background:var(--sea);color:#fff;border-radius:12px;font-weight:700}
+:root[data-theme="dark"] .faq-in button{color:#0D1526}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .faq-in button{color:#0D1526}}
+.ans{min-height:3.5em}
+
+/* growth + welcome */
+.pbar{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}.pbar i{display:block;height:100%;background:var(--orange);border-radius:6px}
+.nowtxt{margin:10px 2px 0;font-size:13.5px;line-height:1.6;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.wk{transition:opacity .45s}
+#guide{display:none}
+#guide h2{font-family:var(--f-display);font-size:19px;margin:6px 0 2px}#guide h2 small{font-size:12.5px;font-weight:400;color:var(--muted);font-family:var(--f-body)}
+#guide .gt{font-size:12.5px;color:var(--muted);letter-spacing:.06em;margin:12px 2px 6px}
+#guide .li{position:relative}#guide .ok{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--good);font-weight:700}
+@media (min-width:1000px){
+  body{padding-bottom:20px}
+  .wrap{max-width:1560px;display:grid;grid-template-columns:minmax(0,1fr) 410px;column-gap:24px;align-items:start}
+  .wrap>*{grid-column:2}
+  .wrap>.stage{grid-column:1;grid-row:1/span 14;position:sticky;top:16px;margin-top:16px}
+  #guide{display:block}
+  .bar #bList{display:none}.bar{grid-template-columns:repeat(5,1fr)}
+  .veil{background:transparent;justify-content:flex-end;align-items:stretch;pointer-events:none}
+  .sheet{pointer-events:auto;width:440px;max-width:440px;height:100vh;max-height:none;border-radius:0;box-shadow:-10px 0 34px rgba(0,0,0,.22)}
+}
+.gdot{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:18px;vertical-align:middle}
+.leg{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:12.5px;color:var(--muted);margin:10px 2px 0}
+.gbar{display:flex;gap:4px;margin-top:6px}.gbar i{flex:1;height:10px;border-radius:5px;background:var(--line)}.gbar i.on{background:var(--good)}
+.lbl{display:block;margin-top:8px;font-size:13.5px}.lbl input{display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);font:inherit;font-size:16px}
+#welcome{position:fixed;inset:0;z-index:40;background:linear-gradient(var(--stage-a),var(--stage-b));display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+#welcome[hidden]{display:none}
+#welcome .wc{max-width:380px;width:100%;background:var(--card);border-radius:24px;padding:28px 22px;box-shadow:var(--shadow)}
+#welcome .wm{width:64px;height:64px;border-radius:20px;background:var(--sea);color:var(--bg);display:grid;place-items:center;margin:0 auto 12px}
+#welcome h1{font-family:var(--f-display);font-weight:900;font-size:28px;line-height:1.25;margin:0}#welcome h1 em{font-style:normal;color:var(--orange)}
+#welcome .wn{margin:14px 0 4px;font-size:13px;color:var(--muted)}#welcome .wt{font-family:var(--f-display);font-weight:900;font-size:20px;margin:0}
+#welcome .wg{margin:10px 0 0;font-size:14px;color:var(--good);min-height:1.5em}
+#welcome button{display:block;width:100%;margin-top:12px;min-height:52px;border-radius:14px;font-size:17px;font-weight:700}
+#wGo{background:var(--orange);color:var(--orange-ink);border:0}#wMute{background:transparent;border:1px solid var(--line);color:var(--fg);font-size:14px!important;min-height:44px!important}
+</style>
+
+
+<div class="wrap">
+  <header class="logo">
+    <span class="mark" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M11 18V6l10-2v12"/></svg></span>
+    <span><small>中和國小弦樂團　後援會</small><b>中和弦<em>音樂島</em></b></span>
+  </header>
+  <button class="now" id="banner"></button>
+  <nav class="bar" role="toolbar" aria-label="地圖工具">
+    <button id="bMus" class="hint" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M11 18V6l10-2v12"/></svg><span id="musT">音樂關</span></button>
+    <button id="bProg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><span id="progT">0/10 探索</span></button>
+    <button id="bAll" aria-label="全景"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg><span>全景</span></button>
+    <button id="bGrow" aria-label="成長"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21v-9"/><path d="M12 12C12 8 9 6 5 6c0 4 3 6 7 6z"/><path d="M12 14c0-3.500 2.500-6 7-6 0 3.500-2.500 6-7 6z"/></svg><span>成長</span></button>
+    <button id="bList" aria-label="清單"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg><span>清單</span></button>
+    <button id="bTime" aria-label="時間"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><span>時間</span></button>
+  </nav>
+  <div id="guide" aria-label="島嶼導覽"></div>
+  <div class="stage" id="stage">
+    <svg id="scene" viewBox="0 10 400 870" role="group" aria-label="中和弦音樂島地圖，共有五座島、十二個地點"></svg>
+  </div>
+  <div class="leg" aria-label="小人頭上圓點的意思"><span>島上小人：</span><span><i class="gdot" style="background:#D9480F">A</i> A 團</span><span><i class="gdot" style="background:#1C7ED6">B</i> B 團</span><span><i class="gdot" style="background:#7048E8">C</i> C 團</span><span><i class="gdot" style="background:#2B2B2B">師</i> 老師</span><span><i class="gdot" style="background:#2F9E44">新</i> 新朋友</span><span><i class="gdot" style="background:#0CA678">志</i> 志工</span><span><i class="gdot" style="background:#C2255C">家</i> 家長</span><span><i class="gdot" style="background:#F59F00">友</i> 校友</span></div>
+  <p class="nowtxt" id="nowTxt" aria-live="polite"></p>
+  <div class="simrow" role="group" aria-label="預覽小人在哪裡"><span>小人在哪：</span><button class="chip" data-s="auto" aria-pressed="true">依現在時間</button><button class="chip" data-s="class" aria-pressed="false">分部合奏課</button><button class="chip" data-s="comp" aria-pressed="false">A團比賽日</button><button class="chip" data-s="eve" aria-pressed="false">活動前一天</button><button class="chip" data-s="free" aria-pressed="false">平常</button></div>
+  <div class="modes" role="group" aria-label="預覽島上的三種模式">
+    <span>預覽：</span>
+    <button class="chip" data-m="auto" aria-pressed="true">依今天日期</button>
+    <button class="chip" data-m="before" aria-pressed="false">演出前</button>
+    <button class="chip" data-m="day" aria-pressed="false">演出當天</button>
+    <button class="chip" data-m="after" aria-pressed="false">演出後</button>
+  </div>
+  <footer>
+    由家長志工整理，內容取自粉專貼文與活動公告，故事與摘要由 AI 協助改寫。孩子的姓名一律以「○」遮住一個字。實際時間與地點，請以學校與粉專最新公告為準。
+  </footer>
+</div>
+
+
+<div id="welcome" role="dialog" aria-modal="true" aria-label="歡迎來到中和弦音樂島">
+  <div class="wc">
+    <div class="wm" aria-hidden="true"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M11 18V6l10-2v12"/></svg></div>
+    <h1>中和弦<em>音樂島</em></h1>
+    <p class="wn">今天的開場曲</p>
+    <p class="wt" id="wTitle"></p>
+    <p class="wg" id="wGrow" aria-live="polite"></p>
+    <button id="wGo">▶ 點一下，聽著音樂進島</button>
+    <button id="wMute">不要聲音，直接進島</button>
+  </div>
+</div>
+<div class="veil" id="veil" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-top"><h2 id="sheet-title"></h2><button class="x" id="close" aria-label="關閉">✕</button></div>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const EVENT = {
+  date:'2026-10-26', name:'九校弦樂．共譜華章', sub:'九校弦樂團市賽前模擬演出暨交流音樂會',
+  time:'09:30 開始進場', place:'秀朗國小　教學大樓五樓禮堂', dow:'星期一',
+  primary:['秀朗國小','永和國小','埔墘國小','德音國小','中和國小'],
+  junior:['中山國中','永和國中','深坑國中','漳和國中']
+};
+const COMP = {
+  date:'2026-11-19', name:'新北市學生音樂比賽', time:'13:00', place:'三和國中音樂廳',
+  group:'團體國小　弦樂合奏三區（B組）', slot:'場次 8-2，出場序 7',
+  own:'Suite for String Orchestra, Mov.1, A-Roving', by:'John Rutter'
+};
+const TL = [
+  {d:'2026-05-19',ds:'5/19',c:'招生',t:'跑班音樂會',x:'團員分成 12 組，走進一到三年級的教室，每班約 8 分鐘。有同學演出後跑來問：怎麼可能學不到一年就拉成這樣？'},
+  {d:'2026-05-22',ds:'5/22',c:'招生',t:'幼兒園快閃',x:'和中和附幼的合唱同台。家長放下工作趕來場佈，孩子也請了個別課假加入。當天剛好是總指揮的生日，高年級孩子在合奏課前拉起生日歌。'},
+  {d:'2026-05-25',ds:'5月',c:'演出',t:'新北市交響樂團入校',x:'學校邀請職業樂團來校演出，並替弦樂團保留了專屬席次。'},
+  {d:'2026-05-30',ds:'5/30',c:'招生',t:'新生說明會',x:'報到、認識樂器、親手拿琴弓。高中音樂班的學姊也回來演奏。'},
+  {d:'2026-06-05',ds:'6/5',c:'演出',t:'成果發表會《盛夏弦響》',x:'晚上 6:30 開演，免費入場。四位校內師長登台合奏，後援會家長搬樂器、佈置、拍照、補位。'},
+  {d:'2026-06-12',ds:'6/12',c:'畢業',t:'七位畢業生',x:'六年的弦樂旅程畢業。許多學長姐回娘家，陪學弟妹。'},
+  {d:'2026-06-25',ds:'6–7月',c:'演出',t:'受邀演出：錦和文教年會',x:'演出後，孩子和現場嘉賓與中和弦夥伴一起用餐交流。'},
+  {d:'2026-08-10',ds:'8月',c:'日常',t:'暑訓開訓',x:'兩週、10 個早晨。8:30 到分部教室開琴盒、調音，10:00 進合奏教室。'},
+  {d:'2026-08-17',ds:'8月中',c:'日常',t:'C 團第一次合奏課',x:'從一對一個別課，走進合奏教室，學著跟指揮一起呼吸。'},
+  {d:'2026-08-29',ds:'8/29',c:'演出',t:'新生入學迎新',x:'開學前最後一個週六早晨，團員頂著太陽把琴聲帶進校園。'},
+  {d:'2026-09-08',ds:'9/8',c:'演出',t:'新生始業式',x:'B 團用 5 分鐘快閃演出《火焰之舞》。小一新生說：我最想學坐著的那個（那是大提琴）。'},
+  {d:'2026-09-12',ds:'9/12',c:'演出',t:'家長日',x:'A、B 團聯手，三首風格不同的曲子，在 8:40 開啟校園的早晨。'},
+  {d:'2026-09-15',ds:'9月中',c:'比賽',t:'臺北文化盃音樂大賽',x:'中提琴四位團員獲獎，並在兒童朝會上被表揚。'},
+  {d:'2026-09-19',ds:'9/19',c:'招生',t:'招生說明會最終回',x:'畢業學長回母校分享，同時舉辦家長座談。'},
+  {d:'2026-09-20',ds:'9/20',c:'演出',t:'比漾廣場《秋光樂章》',x:'一場秋雨把露天舞台搬到室內一樓，9 首曲子，琴聲與人群靠得更近。'},
+  {d:'2026-09-25',ds:'9月底',c:'日常',t:'中秋與教師節獻演',x:'在教師會議上以三首曲子，向校長和師長致謝。'},
+  {d:'2026-10-26',ds:'10/26',c:'演出',t:'九校弦樂．共譜華章',x:'九所學校的弦樂團在市賽前模擬演出、互相交流。',next:true},
+  {d:'2026-11-19',ds:'11/19',c:'比賽',t:'新北市學生音樂比賽',x:'下午 1:00，三和國中音樂廳，團體國小弦樂合奏三區。指定曲是 Rutter 的《Suite for String Orchestra》第一樂章。',next:true},
+  {d:'2026-12-30',ds:'12/30',c:'演出',t:'期末成果發表會',x:'晚上 6:30 到 8:30，A、B、C 三團一起登台。時間以學校公告為準。',next:true},
+  {d:'2027-01-25',ds:'1/25–29',c:'日常',t:'寒訓',x:'寒假的一週，每天上午在學校練琴。'}
+];
+const STORIES = [
+  {t:'下雨天的秋光',x:'原訂在戶外的演出，被一場秋雨趕進室內。沒有舞台燈，也沒有高台，觀眾反而站得更近。孩子拉出第一個音的時候，大家都安靜下來。'},
+  {t:'八分鐘的班級音樂會',x:'十二組小音樂家敲開教室的門。一年級的同學睜大眼睛看琴弓，有人跟著旋律輕輕搖。演奏結束，有人小聲問：我也可以嗎？'},
+  {t:'沒有預告的生日歌',x:'合奏課開始前，高年級的孩子們互看一眼，拉起了生日快樂歌。指揮老師愣了一下，然後笑了。'},
+  {t:'學姊回娘家',x:'已經讀高中音樂班的學姊，假日回到小學，拿起陪她長大的琴。她拉給學弟妹聽，也拉給剛來參觀的新朋友聽。'}
+];
+const HONORS = [
+  {n:'顏○真',g:'國小低年級組　中提琴',a:'優等'},
+  {n:'顏○明',g:'國小低年級組　中提琴',a:'甲等'},
+  {n:'陳○勳',g:'國小中年級組　中提琴',a:'第三名'},
+  {n:'趙○巧',g:'國小中年級組　中提琴',a:'優等'}
+];
+const NODES = {
+  kid:{l:['小團員'],x:180,y:175,r:34,t:'台上最閃亮的人。從第一次握弓開始，一步一步拉到站上舞台。有人學會專注，有人找到自信，也有人交到一輩子的朋友。'},
+  cond:{l:['指揮','老師'],x:180,y:50,r:32,t:'A、B、C 三個團各有一位指揮老師，像隊長一樣，帶大家一起呼吸、一起進拍子。'},
+  sec:{l:['分部','老師'],x:268,y:87,r:32,t:'分部老師：小提琴、中提琴、大提琴等每個聲部，都有自己的老師。分部課時，帶孩子把自己的聲部練穩，再回到合奏裡。'},
+  priv:{l:['個別課','老師'],x:305,y:175,r:32,t:'小提琴、中提琴、大提琴、低音大提琴，每種琴都有自己的個別課老師，陪孩子把細節慢慢磨好。'},
+  par:{l:['爸爸','媽媽'],x:268,y:263,r:32,t:'接送、陪練，是每天的事。演出日更熱鬧：搬樂器、佈置場地、簽到接待、拍照、機動支援，最後一起把場地還原。招生日群組一聲召集，大家就趕來。'},
+  adm:{l:['行政','老師'],x:180,y:300,r:32,t:'學校裡的聯絡窗口，幫忙喬場地、喬時間，也和各處室溝通。'},
+  sch:{l:['學校','師長'],x:92,y:263,r:32,t:'校長和各處室很支持音樂教育，導師也體諒早上要練琴。連四位校內師長，都登台和孩子一起合奏。'},
+  alu:{l:['學長姐'],x:55,y:175,r:32,t:'畢業之後還是會回來，帶新生體驗樂器，也和學弟妹一起同台。'}
+};
+const EDGES = [['kid','cond'],['kid','sec'],['kid','priv'],['kid','par'],['kid','adm'],['kid','sch'],['kid','alu'],['cond','sec'],['sec','priv'],['par','adm'],['adm','sch'],['alu','cond']];
+const FAQ = [
+  {k:['基礎','零基礎','沒學過','不會','從零'],a:'不需要基礎。從零開始學琴，一起合奏，在音樂裡找到夥伴、累積自信。'},
+  {k:['樂器','小提琴','中提琴','大提琴','低音'],a:'有小提琴、中提琴、大提琴和低音大提琴。可以到「樂器小鎮」聽聽看音域有多不一樣。'},
+  {k:['招生','報名','加入','說明會'],a:'每學年都有跑班音樂會、幼兒園場次和招生說明會。下一輪報名資訊會公告在粉專，請留意最新貼文。'},
+  {k:['暑訓','暑假','集訓'],a:'每年暑假有暑訓，兩週共 10 個早晨，提前為新學年蓄力，也讓老師認識每位團員。'},
+  {k:['幾團','A團','B團','C團','編制'],a:'目前有 A、B、C 三團。新生先從個別課和 C 團合奏課開始，再一步步往上。'},
+  {k:['明天','演出','音樂會','九校','秀朗','幾點','哪裡','地點'],a:'10 月 26 日（星期一）09:30 開始進場，在秀朗國小教學大樓五樓禮堂。九所學校的弦樂團會在市賽前模擬演出、互相交流。'},
+  {k:['比賽','市賽','評審','11月','自選','指定','三和','弦樂合奏'],a:'新北市學生音樂比賽在 11 月 19 日（星期四）下午 1:00，三和國中音樂廳，團體國小弦樂合奏三區，出場序 7。指定曲是 John Rutter 的 Suite for String Orchestra 第一樂章，自選曲公布後會補上。'},
+  {k:['家長','志工','後援會','幫忙'],a:'後援會的家長會幫忙場佈、簽到、攝影、機動支援與場地復原。到「志工小站」挑幾個有興趣的位置，就能產生一則訊息，貼給後援會。'}
+];
+const STRINGS = {
+  '小提琴':{hz:[196,293.7,440,659.3],d:'最高音的弦樂器，明亮、像在唱歌。',n:'G D A E'},
+  '中提琴':{hz:[130.8,196,293.7,440],d:'比小提琴大一點、低一點，聲音溫暖、有點沙沙的。',n:'C G D A'},
+  '大提琴':{hz:[65.4,98,146.8,220],d:'坐著拉，音域像人的聲音，最適合唱出低沉的旋律。',n:'C G D A'},
+  '低音大提琴':{hz:[41.2,55,73.4,98],d:'站著或坐高腳椅拉，最低、最厚，像整個樂團的地基。',n:'E A D G'}
+};
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function todayTW(){return new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Taipei'})}
+function dayDiff(a,b){return Math.round((new Date(b+'T00:00:00Z')-new Date(a+'T00:00:00Z'))/864e5)}
+let MODE='auto';
+function curMode(){
+  if(MODE!=='auto')return MODE;
+  const n=dayDiff(todayTW(),EVENT.date);
+  return n>0?'before':n===0?'day':'after';
+}
+
+/* ---------- growth: forest (team practice count) and travellers (friends who want to join) ---------- */
+const GROW={minutes:0,a:25,b:22,c:15,t:8,friends:0,v:4,vgoal:10,p:4,u:3};   /* team totals only; no names. a/b/c/t are starting values until 後援會 confirms */
+const T_STEPS=[0,3,8,16,30],H_STEPS=[0,2,5,10,20],PER_FIG=6,MIN_PER_TREE=10000;
+const F_NAMES=['小樹苗','小樹林','茂密的樹林','繁盛的森林','大森林'],H_NAMES=['安靜的小島','有人來散步','熱鬧起來','大家都來了','節慶市集'];
+const lvl=(v,st)=>{let l=0;st.forEach((t,i)=>{if(v>=t)l=i});return l};
+const GL={f:0,h:0,mine:0,trees:0};
+let MYDAYS=[];
+try{MYDAYS=JSON.parse(localStorage.getItem('zhx-days')||'[]')}catch(e){}
+const calcGL=()=>{GL.trees=Math.floor(GROW.minutes/MIN_PER_TREE);GL.f=lvl(GL.trees,T_STEPS);GL.h=lvl(GROW.friends,H_STEPS);GL.mine=Math.min(MYDAYS.length,12)};
+let NEWDAY=false;
+{const td=todayTW();if(!MYDAYS.includes(td)){MYDAYS.push(td);MYDAYS=MYDAYS.slice(-60);NEWDAY=true;try{localStorage.setItem('zhx-days',JSON.stringify(MYDAYS))}catch(e){}}}
+calcGL();
+/* graduates: kept in this page (names are shown with one character masked). Empty until families agree and the list is handed over. */
+const ALUMNI=[];   /* {n:'姓名', y:'114', inst:'小提琴', sex:'女'} */
+const maskName=n=>{n=String(n||'');return n.length<=1?n:n.length===2?n[0]+'○':n[0]+'○'+n.slice(2)};
+const TILES = [
+  {id:'dock', name:'活動預告', hint:()=>({before:'明天的演出資訊',day:'今天的演出資訊',after:'下一場：11/19 市賽'}[curMode()])},
+  {id:'map',  name:'成長足跡', hint:()=>TL.length+' 個重要時刻'},
+  {id:'honor',name:'榮譽牆',   hint:()=>'比賽與畢業'},
+  {id:'net',  name:'關於中和弦', hint:()=>'孩子、老師、家長，點一個看看'},
+  {id:'day',  name:'團員的一天', hint:()=>'從調音到合奏'},
+  {id:'inst', name:'樂器小鎮', hint:()=>'四種樂器，猜猜是誰'},
+  {id:'tch',  name:'師資團隊', hint:()=>'指揮老師與分部老師'},
+  {id:'ask',  name:'想加入嗎？', hint:()=>'輸入問題，馬上回答'},
+  {id:'vol',  name:'志工小站', hint:()=>'想幫忙？挑幾個位置'},
+  {id:'story',name:'故事格',   hint:()=>'四個小故事'},
+  {id:'comp', name:'古典作曲家', hint:()=>'六位作曲家的小故事'},
+  {id:'alum', name:'畢業校友', hint:()=>ALUMNI.length?ALUMNI.length+' 位畢業生':'畢業生的足跡'}
+];
+
+/* ---------- scene: everything is drawn in SVG, no images ---------- */
+const SC=$('#scene');
+let vb=[0,0,400,870],raf=0,audio=null,lastFocus=null;
+/* two layouts of the same archipelago: a tall one for phones, a wide one for computers. 同心島 is the hub in both. */
+const LAYOUTS={
+ tall:{vb:'0 10 400 870',W:400,H:880,cols:18,rows:44,
+  ISLES:[
+   {id:'show',name:'演出島',c:[150,115],rx:120,ry:68,lab:[235,176],z:['dock','map','honor'],hills:[[130,100,32,1],[215,125,28,.7]]},
+   {id:'core',name:'同心島',c:[200,375],rx:128,ry:95,lab:[290,455],z:['net','day','inst','tch'],hills:[[170,355,36,1],[250,395,30,.7]]},
+   {id:'fam',name:'家人島',c:[100,615],rx:88,ry:62,lab:[150,668],z:['ask','vol'],hills:[[85,600,28,1],[135,630,24,.7]]},
+   {id:'story',name:'故事島',c:[300,625],rx:88,ry:66,lab:[350,684],z:['story','comp'],hills:[[285,610,28,1],[340,640,24,.6]]},
+   {id:'alum',name:'校友島',c:[200,800],rx:108,ry:60,lab:[275,852],z:['alum'],hills:[[185,790,28,1],[240,810,22,.6]]}],
+  ANCH:{dock:[85,130],map:[175,98],honor:[235,132],net:[200,342],day:[130,392],inst:[290,398],tch:[205,440],ask:[62,605],vol:[125,636],story:[270,652],comp:[335,610],alum:[200,795]},
+  ROUTES:['M170 183C175 225 190 245 200 282','M118 556C122 520 135 490 150 462','M290 562C286 520 262 492 250 462','M200 472C197 560 203 650 200 742'],
+  islets:[[358,130,24,0],[46,330,22,1],[352,300,24,2],[60,740,22,1],[350,800,24,2]],
+  clouds:[[55,35,1.2,52,0],[340,40,1.2,64,-12],[35,505,1,58,-30],[360,520,.9,70,-20]],
+  birds:[[0,100,1,34,0],[0,380,.8,42,-14],[0,560,.9,38,-24]]},
+ wide:{vb:'0 0 900 600',W:900,H:600,cols:38,rows:32,
+  ISLES:[
+   {id:'show',name:'演出島',c:[200,120],rx:140,ry:80,lab:[300,190],z:['dock','map','honor'],hills:[[170,105,34,1],[250,135,28,.7]]},
+   {id:'core',name:'同心島',c:[450,300],rx:150,ry:100,lab:[560,385],z:['net','day','inst','tch'],hills:[[420,280,38,1],[500,325,32,.7]]},
+   {id:'fam',name:'家人島',c:[190,470],rx:140,ry:85,lab:[290,545],z:['ask','vol'],hills:[[165,455,34,1],[235,490,28,.7]]},
+   {id:'story',name:'故事島',c:[700,125],rx:135,ry:78,lab:[790,195],z:['story','comp'],hills:[[675,110,32,1],[750,140,26,.7]]},
+   {id:'alum',name:'校友島',c:[710,470],rx:135,ry:85,lab:[800,545],z:['alum'],hills:[[690,455,32,1],[750,490,26,.7]]}],
+  ANCH:{dock:[110,125],map:[205,97],honor:[285,132],net:[450,262],day:[355,312],inst:[548,312],tch:[450,365],ask:[120,470],vol:[225,495],story:[650,132],comp:[750,122],alum:[710,475]},
+  ROUTES:['M262 190C320 215 360 232 395 252','M640 190C580 215 540 232 505 252','M270 440C330 420 365 395 400 372','M640 440C580 420 540 395 500 372'],
+  islets:[[450,62,24,0],[450,560,26,1],[40,300,22,2],[870,300,24,0],[40,570,18,1],[870,570,20,2]],
+  clouds:[[80,40,1.3,52,0],[820,40,1.2,64,-12],[40,365,1,58,-30],[868,420,.9,70,-20]],
+  birds:[[0,60,1,34,0],[0,300,.8,42,-14],[0,520,.9,38,-24]]}
+};
+let LAY=LAYOUTS.tall,ISLES=LAY.ISLES,ANCH=LAY.ANCH,ROUTES=LAY.ROUTES,HILLS=ISLES.flatMap(i=>i.hills);
+const wideMQ=matchMedia('(min-width:1000px)');
+function setLayout(){LAY=wideMQ.matches?LAYOUTS.wide:LAYOUTS.tall;ISLES=LAY.ISLES;ANCH=LAY.ANCH;ROUTES=LAY.ROUTES;HILLS=ISLES.flatMap(i=>i.hills);SC.setAttribute('viewBox',LAY.vb)}
+function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+let R=rng(11);
+const P=a=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+const poly=(a,f)=>`<polygon points="${P(a)}" fill="${f}"/>`;
+function smooth(pts,dy){
+  const n=pts.length,m=i=>{const a=pts[i%n],b=pts[(i+1)%n];return[(a[0]+b[0])/2,(a[1]+b[1])/2+dy]};
+  let d=`M${m(n-1)[0]},${m(n-1)[1]}`;
+  for(let i=0;i<n;i++){const p=pts[i],q=m(i);d+=`Q${p[0]},${p[1]+dy} ${q[0]},${q[1]}`}
+  return d+'Z';
+}
+function inPoly(p,pg){let c=false;for(let i=0,j=pg.length-1;i<pg.length;j=i++){const[xi,yi]=pg[i],[xj,yj]=pg[j];if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi))c=!c}return c}
+function hgt(x,y){let h=0;for(const[cx,cy,s,a]of HILLS)h+=a*Math.exp(-((x-cx)**2+(y-cy)**2)/(2*s*s));return h}
+
+/* isometric box: ground diamond centred on (cx,cy); c = [top,left,right] */
+function box(cx,cy,w,h,c){
+  const a=w/2,b=w/4,N=[cx,cy-b],E=[cx+a,cy],S=[cx,cy+b],W=[cx-a,cy],up=p=>[p[0],p[1]-h];
+  return poly([W,S,up(S),up(W)],c[1])+poly([S,E,up(E),up(S)],c[2])+poly([up(N),up(E),up(S),up(W)],c[0]);
+}
+function roof(cx,cy,w,h,r,c){
+  const a=w/2,b=w/4,apex=[cx,cy-h-r];
+  return poly([[cx-a,cy-h],[cx,cy+b-h],apex],c[1])+poly([[cx,cy+b-h],[cx+a,cy-h],apex],c[0]);
+}
+const WOOD=['#E2C795','#C4A070','#A88555'], CREAM=['#F8EFD6','#E8D9B4','#D2C08F'];
+const REDR=['#E88A6E','#C65A43'], TEALR=['#7CC4BC','#4E9893'], BLUER=['#7FA8D6','#5A84B5'];
+
+function tree(x,y,s,v){
+  const pal=[['#6F9A58','#527C45'],['#86A862','#668A4E'],['#8E9A58','#6F7C45']][v];
+  const cone=(cy,k)=>{const t=[x,cy-2.3*k*s],l=[x-k*s,cy-.5*k*s],m=[x,cy+.1*k*s],r=[x+k*s,cy-.5*k*s];return poly([t,l,m],pal[0])+poly([t,m,r],pal[1])};
+  return `<ellipse cx="${x}" cy="${y+1}" rx="${(s*1.1).toFixed(1)}" ry="${(s*.4).toFixed(1)}" fill="rgba(30,50,20,.22)"/><rect x="${(x-s*.18).toFixed(1)}" y="${(y-s*.5).toFixed(1)}" width="${(s*.36).toFixed(1)}" height="${(s*.6).toFixed(1)}" fill="#7A5A3A"/>`+cone(y-s*.2,1.05)+cone(y-s*1.2,.78);
+}
+const person=(x,y,c)=>`<g transform="translate(${x} ${y})"><ellipse cx="0" cy="1" rx="3.6" ry="1.4" fill="rgba(0,0,0,.18)"/><rect x="-2.6" y="-8" width="5.2" height="8" rx="2.2" fill="${c}"/><circle cx="0" cy="-10.6" r="2.6" fill="#F2D1AE"/></g>`;
+const cloud=(x,y,k,dur,dl)=>`<g class="cloud" style="animation-duration:${dur}s;animation-delay:${dl}s"><g transform="translate(${x} ${y}) scale(${k})" fill="#FFFFFF" opacity=".93"><ellipse cx="0" cy="6" rx="26" ry="8"/><circle cx="-8" cy="0" r="9"/><circle cx="6" cy="-3" r="11"/><circle cx="17" cy="2" r="7"/></g></g>`;
+const wave=(x,y,k,dl)=>`<path class="wv" style="animation-delay:${dl}s" d="M${x} ${y}q${6*k} ${-4*k} ${12*k} 0t${12*k} 0" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>`;
+function islet(x,y,rx,v){
+  const ry=rx*.5;
+  return `<ellipse cx="${x}" cy="${y+10}" rx="${rx+7}" ry="${ry+4}" fill="#fff" opacity=".22"/><rect x="${x-rx}" y="${y}" width="${rx*2}" height="10" fill="#A08C64"/><ellipse cx="${x}" cy="${y+10}" rx="${rx}" ry="${ry}" fill="#8C7A55"/><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#EADFB6"/><ellipse cx="${x}" cy="${y-1}" rx="${rx*.84}" ry="${ry*.8}" fill="#8DB06A"/><polygon points="${x-rx*.6},${y} ${x},${y-ry*.78} ${x+rx*.25},${y}" fill="#A9C882" opacity=".7"/>`+tree(x-rx*.25,y+2,rx*.2,v)+tree(x+rx*.3,y,rx*.15,(v+1)%3);
+}
+
+const BUILD={
+  dock(x,y){
+    const q=(dx,dy)=>`${x+dx},${y+dy}`,P1=[-14,8],P2=[-2,14],P3=[-40,50],P4=[-52,44];
+    let s=`<polygon points="${q(...P1)} ${q(...P2)} ${q(...P3)} ${q(...P4)}" fill="#D2AC78"/><polygon points="${q(...P4)} ${q(...P3)} ${q(P3[0],P3[1]+5)} ${q(P4[0],P4[1]+5)}" fill="#9C7A52"/><polygon points="${q(...P3)} ${q(...P2)} ${q(P2[0],P2[1]+5)} ${q(P3[0],P3[1]+5)}" fill="#B8956A"/>`;
+    for(let t=.2;t<.95;t+=.2){const a=[P1[0]+(P4[0]-P1[0])*t,P1[1]+(P4[1]-P1[1])*t],b=[P2[0]+(P3[0]-P2[0])*t,P2[1]+(P3[1]-P2[1])*t];s+=`<line x1="${x+a[0]}" y1="${y+a[1]}" x2="${x+b[0]}" y2="${y+b[1]}" stroke="#A07F54" stroke-width=".9"/>`}
+    const bx=x-38,by=y+62;
+    s+=`<polygon points="${bx-16},${by} ${bx+16},${by} ${bx+10},${by+10} ${bx-10},${by+10}" fill="#F7F0DC"/><polygon points="${bx-16},${by} ${bx+16},${by} ${bx+15},${by+3} ${bx-15},${by+3}" fill="#C65A43"/><line x1="${bx}" y1="${by-25}" x2="${bx}" y2="${by}" stroke="#7A5A3A" stroke-width="1.5"/><polygon points="${bx+1},${by-23} ${bx+1},${by-2} ${bx+14},${by-2}" fill="#F5A04A"/>`;
+    return s+box(x+16,y,26,12,CREAM)+roof(x+16,y,26,12,11,REDR);
+  },
+  map(x,y){
+    return box(x,y+2,14,5,['#C9C2A8','#A9A28A','#8F896F'])+`<rect x="${x-1.5}" y="${y-28}" width="3" height="30" fill="#7A5A3A"/>`+
+      `<polygon points="${x-27},${y-25} ${x-1},${y-25} ${x-1},${y-16} ${x-27},${y-16} ${x-31},${y-20.5}" fill="#F8EFD6"/><polygon points="${x+1},${y-20} ${x+27},${y-20} ${x+31},${y-15.5} ${x+27},${y-11} ${x+1},${y-11}" fill="#F5A04A"/>`+
+      `<circle cx="${x}" cy="${y-30}" r="2.6" fill="#E0705A"/>`;
+  },
+  day(x,y){
+    return `<polygon points="${x},${y-27} ${x-21},${y-1} ${x},${y+7}" fill="#F8EFD6"/><polygon points="${x},${y-27} ${x},${y+7} ${x+21},${y-1}" fill="#E8C58A"/>`+
+      `<polygon points="${x-4},${y+5.5} ${x},${y-8} ${x+4},${y+5.5}" fill="#6B4E32"/>`+
+      `<g stroke="#FFD25E" stroke-width="1.6" stroke-linecap="round"><line x1="${x+24}" y1="${y-48}" x2="${x+24}" y2="${y-44}"/><line x1="${x+24}" y1="${y-30}" x2="${x+24}" y2="${y-34}"/><line x1="${x+15}" y1="${y-39}" x2="${x+19}" y2="${y-39}"/><line x1="${x+33}" y1="${y-39}" x2="${x+29}" y2="${y-39}"/></g><circle cx="${x+24}" cy="${y-39}" r="5.5" fill="#FFD25E"/>`;
+  },
+  inst(x,y){
+    return box(x-14,y+2,22,13,CREAM)+roof(x-14,y+2,22,13,10,TEALR)+box(x+14,y-3,22,15,CREAM)+roof(x+14,y-3,22,15,10,REDR)+
+      `<g transform="translate(${x} ${y+12}) rotate(-12)"><ellipse cx="0" cy="0" rx="4.6" ry="5" fill="#9B5A2B"/><ellipse cx="0" cy="-7" rx="3.4" ry="3.8" fill="#A9652F"/><rect x="-1" y="-20" width="2" height="14" fill="#4A3320"/></g>`;
+  },
+  story(x,y){
+    return box(x,y+2,28,6,['#E0705A','#C65A43','#A74A38'])+box(x+2,y-4,24,6,['#7FA8D6','#5A84B5','#456C97'])+box(x-1,y-10,20,6,['#8DB06A','#6F9250','#5A7A40'])+
+      `<polygon points="${x-30},${y+10} ${x-18},${y+4} ${x-6},${y+10} ${x-18},${y+16}" fill="#FFFDF6"/><line x1="${x-18}" y1="${y+4}" x2="${x-18}" y2="${y+16}" stroke="#C9C2A8" stroke-width="1"/>`;
+  },
+  net(x,y){
+    let s=`<ellipse cx="${x}" cy="${y+4}" rx="40" ry="20" fill="#E7E0C2"/><ellipse cx="${x}" cy="${y+2}" rx="36" ry="17" fill="#F3EDD2"/>`;
+    const pts=[];for(let i=0;i<7;i++){const a=-Math.PI/2+i*2*Math.PI/7;pts.push([x+Math.cos(a)*27,y+2+Math.sin(a)*13])}
+    pts.forEach(p=>{s+=`<line x1="${x}" y1="${y+2}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="#E8590C" stroke-width="1.5" stroke-dasharray="3 2.5"/>`});
+    pts.forEach(p=>{s+=`<circle cx="${p[0].toFixed(1)}" cy="${(p[1]-3).toFixed(1)}" r="3.6" fill="#FFFDF6" stroke="#2F7F7B" stroke-width="1.6"/>`});
+    return s+`<ellipse cx="${x}" cy="${y+3}" rx="8" ry="3.4" fill="#F5A04A" stroke="#FFF8E6" stroke-width="1.2"/><g transform="translate(${x} ${y+3})"><rect x="-3" y="-11" width="6" height="10" rx="2.4" fill="#2E3326"/><polygon points="-1.2,-10 1.2,-10 0,-6" fill="#fff"/><circle cx="0" cy="-14" r="3" fill="#F2D1AE"/><g class="bat"><line x1="3" y1="-8" x2="9.5" y2="-15" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></g></g>`;
+  },
+  honor(x,y){
+    const star=`<polygon points="${x},${y-37} ${x+2.4},${y-31.5} ${x+8},${y-31} ${x+3.8},${y-27.3} ${x+5},${y-21.5} ${x},${y-24.5} ${x-5},${y-21.5} ${x-3.8},${y-27.3} ${x-8},${y-31} ${x-2.4},${y-31.5}" fill="#FFD25E" stroke="#E8A93A" stroke-width=".8"/>`;
+    return box(x,y,18,18,['#F3E3B0','#DEC27E','#C6A864'])+box(x-15,y+3,16,10,['#E6E6E0','#C5C7C2','#A9ACA6'])+box(x+15,y+4,16,6,['#E3B48A','#C48F63','#A87649'])+star;
+  },
+  tch(x,y){
+    return box(x,y,30,9,['#E9D8B4','#CDB88C','#B59E72'])+roof(x,y,30,9,10,BLUER)+`<rect x="${x-1}" y="${y-31}" width="2" height="19" fill="#6B4E32"/><rect x="${x-10}" y="${y-36}" width="20" height="11" rx="1.5" fill="#FFFDF6" stroke="#4A3320" stroke-width="1"/><line x1="${x-7}" y1="${y-33}" x2="${x+7}" y2="${y-33}" stroke="#8A7852" stroke-width=".8"/><line x1="${x-7}" y1="${y-30}" x2="${x+5}" y2="${y-30}" stroke="#8A7852" stroke-width=".8"/><line x1="${x-7}" y1="${y-27}" x2="${x+7}" y2="${y-27}" stroke="#8A7852" stroke-width=".8"/>`;
+  },
+  alum(x,y){
+    return box(x,y,28,12,CREAM)+roof(x,y,28,12,12,['#7A8CC4','#566AA6'])+`<polygon points="${x-11},${y-27} ${x},${y-32} ${x+11},${y-27} ${x},${y-22}" fill="#2E3326"/><rect x="${x-5}" y="${y-25}" width="10" height="4" fill="#2E3326"/><line x1="${x+9}" y1="${y-28}" x2="${x+9}" y2="${y-20}" stroke="#FFD25E" stroke-width="1.2"/><circle cx="${x+9}" cy="${y-19}" r="1.5" fill="#FFD25E"/>`+box(x-20,y+7,10,6,WOOD)+box(x+19,y+8,10,6,WOOD);
+  },
+  comp(x,y){
+    return box(x,y,30,11,CREAM)+roof(x,y,30,11,12,BLUER)+`<polygon points="${x-9},${y+9} ${x+5},${y+5} ${x+10},${y+9} ${x-4},${y+14}" fill="#33363A"/><polygon points="${x-9},${y+9} ${x-4},${y+14} ${x-4},${y+17} ${x-9},${y+12}" fill="#1F2124"/><circle cx="${x}" cy="${y-18}" r="1.6" fill="#FFD25E"/>`;
+  },
+  vol(x,y){
+    return box(x,y,30,9,CREAM)+roof(x,y,34,9,11,['#F5A04A','#E08A30'])+`<rect x="${x+13}" y="${y-30}" width="1.6" height="22" fill="#6B4E32"/><polygon points="${x+14.6},${y-30} ${x+14.6},${y-23} ${x+22},${y-26.5}" fill="#E0705A"/>`+box(x-20,y+7,10,6,WOOD)+box(x+20,y+8,10,6,WOOD);
+  },
+  ask(x,y){
+    return `<rect x="${x-1.5}" y="${y-26}" width="3" height="28" fill="#6B4E32"/>`+box(x,y+3,16,3,WOOD)+
+      `<rect x="${x-9}" y="${y-36}" width="18" height="12" rx="3" fill="#FFFDF6" stroke="#2F7F7B" stroke-width="1.4"/><polygon points="${x-3},${y-24.5} ${x+3},${y-24.5} ${x-1},${y-20}" fill="#FFFDF6" stroke="#2F7F7B" stroke-width="1.4"/><rect x="${x-3.5}" y="${y-25.2}" width="8" height="2.6" fill="#FFFDF6"/>`+
+      `<circle cx="${x-4}" cy="${y-30}" r="1.3" fill="#E8590C"/><circle cx="${x}" cy="${y-30}" r="1.3" fill="#E8590C"/><circle cx="${x+4}" cy="${y-30}" r="1.3" fill="#E8590C"/>`;
+  }
+};
+const PEOPLE=[]; const _OLDPEOPLE=[[142,431,'#E26B5C'],[150,438,'#4C8FB8'],[140,344,'#E26B5C'],[86,348,'#4C8FB8'],[186,352,'#F2B544'],[248,350,'#7A62B8'],[296,348,'#F2B544'],[288,434,'#7A62B8'],[150,258,'#E26B5C'],[242,204,'#4C8FB8'],[190,206,'#F2B544'],[284,260,'#4C8FB8']];
+
+const WCOL=['#E26B5C','#4C8FB8','#F2B544','#7A62B8','#4FA37A','#D9778F','#E0873E','#5B7FA8','#8E6BB5'],WINST=['v','c','v','n','v','c','v','n','v'];
+function walkerSvg(c,k){
+  const ins=k==='b'?'<line x1="3" y1="-6" x2="7" y2="-12" stroke="#F7F0DC" stroke-width=".9" stroke-linecap="round"/>':k==='v'?'<ellipse cx="3.2" cy="-5.4" rx="1.5" ry="2" fill="#9B5A2B"/><line x1="4.6" y1="-8" x2="2" y2="-3" stroke="#4A3320" stroke-width=".7"/>':k==='c'?'<ellipse cx="-3.7" cy="-5.6" rx="2.3" ry="4" fill="#8A4B22"/><ellipse cx="-3.7" cy="-9" rx="1.5" ry="1.8" fill="#8A4B22"/>':'';
+  return `<circle cx="0" cy="-5" r="9" fill="transparent"/><ellipse cx="0" cy="1" rx="3.6" ry="1.4" fill="rgba(0,0,0,.18)"/><line class="l1" x1="-1.2" y1="-1" x2="-1.2" y2="1.6" stroke="#3A3A3A" stroke-width="1.3" stroke-linecap="round"/><line class="l2" x1="1.2" y1="-1" x2="1.2" y2="1.6" stroke="#3A3A3A" stroke-width="1.3" stroke-linecap="round"/>${ins}<rect x="-2.6" y="-8" width="5.2" height="7.5" rx="2.2" fill="${c}"/><circle cx="0" cy="-10.6" r="2.6" fill="#F2D1AE"/>`;
+}
+const noteSvg=(x,y,i,c)=>`<g transform="translate(${x} ${y})"><g class="nt" style="animation-delay:${(i*.8).toFixed(1)}s;animation-duration:${4+i%3}s" fill="${c}" stroke="${c}"><ellipse cx="0" cy="0" rx="2.8" ry="2" transform="rotate(-20)" stroke="none"/><path d="M2.4-.6V-9l3.6 1.8" fill="none" stroke-width="1.2"/></g></g>`;
+let walkers=[],raf2=0;
+let STAMPS=new Set();
+try{STAMPS=new Set(JSON.parse(localStorage.getItem('zhx-stamps')||'[]'))}catch(e){}
+const pillW=t=>Math.round(34+t.name.length*11.5);
+const chkSvg=w=>`<g class="chk" transform="translate(${w/2-2} -11)"><circle r="6.5" fill="#2E7D46" stroke="#FFF8E6" stroke-width="1.5"/><path d="M-3.2 0l2.2 2.4 4.2-4.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+function updateProg(){
+  const n=STAMPS.size,all=n>=TILES.length;
+  $('#progT').textContent=all?'集滿了！':n+'/'+TILES.length+' 探索';
+}
+function addStamp(id){
+  if(STAMPS.has(id))return false;
+  STAMPS.add(id);
+  try{localStorage.setItem('zhx-stamps',JSON.stringify([...STAMPS]))}catch(e){}
+  const g=document.querySelector(`.pill[data-id="${id}"]`),t=TILES.find(x=>x.id===id);
+  if(g&&t)g.insertAdjacentHTML('beforeend',chkSvg(pillW(t)));
+  updateProg();renderGuide();
+  return true;
+}
+const ODE=[329.6,329.6,349.2,392,392,349.2,329.6,293.7,261.6,261.6,293.7,329.6,329.6,293.7,293.7];
+
+/* ---- background strings: a slow, gentle chord loop made with Web Audio (no audio files) ---- */
+const CHORDS=[[146.8,185,220,293.7],[110,164.8,220,277.2],[123.5,146.8,185,246.9],[92.5,138.6,185,220],[98,146.8,196,246.9],[146.8,185,220,293.7],[98,146.8,196,246.9],[110,164.8,220,277.2]];
+const mus={on:false,timer:0,next:0,i:0,master:null};
+function chordAt(i,t){
+  const c=CHORDS[i%CHORDS.length],dur=5;
+  c.forEach((f,k)=>[-5,5].forEach(det=>{
+    const o=audio.createOscillator(),g=audio.createGain(),lp=audio.createBiquadFilter(),lfo=audio.createOscillator(),lg=audio.createGain();
+    o.type='sawtooth';o.frequency.value=f;o.detune.value=det;lp.type='lowpass';lp.frequency.value=650+k*130;lp.Q.value=.5;
+    lfo.frequency.value=4.8+Math.random()*.7;lg.gain.value=3;lfo.connect(lg);lg.connect(o.detune);
+    const pk=k===0?.05:.032;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+1.1);g.gain.setValueAtTime(pk,t+dur-.4);g.gain.linearRampToValueAtTime(0,t+dur+.9);
+    o.connect(lp);lp.connect(g);g.connect(mus.master);o.start(t);lfo.start(t);o.stop(t+dur+1);lfo.stop(t+dur+1);
+  }));
+  [0,1,2,3,2,1,2,3].forEach((p,n)=>{
+    const tt=t+n*.625,o=audio.createOscillator(),g=audio.createGain(),lp=audio.createBiquadFilter();
+    o.type='sawtooth';o.frequency.value=c[p]*2;lp.type='lowpass';lp.frequency.value=2400;
+    g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(.032,tt+.02);g.gain.exponentialRampToValueAtTime(.0005,tt+.9);
+    o.connect(lp);lp.connect(g);g.connect(mus.master);o.start(tt);o.stop(tt+1);
+  });
+}
+function musicSet(on){
+  try{
+    if(on){
+      const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+      audio=audio||new AC();if(audio.state==='suspended')audio.resume();
+      mus.master=audio.createGain();mus.master.gain.setValueAtTime(0,audio.currentTime);mus.master.gain.linearRampToValueAtTime(.5,audio.currentTime+1.5);mus.master.connect(audio.destination);
+      mus.next=audio.currentTime+.15;mus.i=0;
+      const pump=()=>{while(mus.next<audio.currentTime+1.5){chordAt(mus.i,mus.next);mus.next+=5;mus.i++}};
+      pump();mus.timer=setInterval(pump,400);mus.on=true;
+    }else{
+      clearInterval(mus.timer);mus.on=false;
+      if(mus.master){const m=mus.master;m.gain.cancelScheduledValues(audio.currentTime);m.gain.setValueAtTime(m.gain.value,audio.currentTime);m.gain.linearRampToValueAtTime(0,audio.currentTime+.6);setTimeout(()=>{try{m.disconnect()}catch(e){}},1500)}
+    }
+  }catch(e){mus.on=false}
+  const b=$('#bMus');b.setAttribute('aria-pressed',mus.on);b.classList.remove('hint');$('#musT').textContent=mus.on?'音樂開':'音樂關';
+}
+const GCOL={A:'#D9480F',B:'#1C7ED6',C:'#7048E8',T:'#2B2B2B',F:'#2F9E44',V:'#0CA678',P:'#C2255C',U:'#F59F00'},GLAB={A:'A',B:'B',C:'C',T:'師',F:'新',V:'志',P:'家',U:'友'},BODY={A:'#F4A261',B:'#6FB3E8',C:'#B197FC',T:'#3D4A66',F:'#E9E4D4',V:'#7BC47F',P:'#E98BA9',U:'#F2C14E'};
+const cyc=(a,i)=>a[i%a.length];
+/* who is on the island: kids (A/B/C), teachers (師), and the people on the outer islands: volunteers (志), parents (家), alumni (友), new friends (新) */
+function figSpec(){
+  const L=[];[['A',GROW.a],['B',GROW.b],['C',GROW.c]].forEach(([k,n])=>{for(let q=0;q<Math.ceil(n/PER_FIG);q++)L.push({k})});
+  for(let q=0;q<Math.min(6,GROW.t);q++)L.push({k:'T',n:q});
+  for(let q=0;q<Math.max(1,Math.min(8,GROW.v));q++)L.push({k:'V',n:q});
+  for(let q=0;q<Math.max(3,Math.min(6,GROW.p));q++)L.push({k:'P',res:cyc([0,3,2],q)});
+  for(let q=0;q<Math.max(1,Math.min(5,GROW.u));q++)L.push({k:'U',res:4});
+  for(let q=0;q<Math.min(6,GROW.friends);q++)L.push({k:'F',res:cyc([3,0],q)});
+  return L;
+}
+/* ---------- who is where: follows the class calendar (Asia/Taipei) ---------- */
+let SIM='auto',WSG=[],SPEC=[],stTimer=0;
+const mmOf=t=>{const[a,b]=t.split(':');return +a*60+ +b};
+const WEEK={A:[[2,'07:50','08:30'],[3,'12:40','14:10'],[5,'07:50','08:30'],[5,'16:10','17:40']],B:[[3,'07:50','08:30'],[3,'12:40','14:10'],[5,'16:10','17:40']],C:[[5,'16:10','17:40']]};
+const HOLI=['2026-09-25','2026-10-09','2026-12-25'],ADD_A=['2026-10-03','2026-10-09','2026-10-17','2026-10-24','2026-11-07','2026-11-14'];
+function nowTW(){
+  const f=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());
+  const g=t=>f.find(p=>p.type===t).value;
+  return{d:todayTW(),dow:{Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[g('weekday')],m:(+g('hour')%24)*60+ +g('minute')};
+}
+function simState(){
+  const st={cls:{A:false,B:false,C:false},comp:false,eve:false};
+  if(SIM==='class'){st.cls={A:true,B:true,C:true};return st}
+  if(SIM==='comp'){st.comp=true;return st}
+  if(SIM==='eve'){st.eve=true;return st}
+  if(SIM==='free')return st;
+  const n=nowTW();
+  if(n.d===COMP.date)st.comp=true;
+  if([EVENT.date,COMP.date].some(d=>dayDiff(n.d,d)===1))st.eve=true;
+  if(n.d>='2026-09-01'&&n.d<='2026-12-30'&&!HOLI.includes(n.d))['A','B','C'].forEach(g=>{if(WEEK[g].some(([d,a,b])=>d===n.dow&&n.m>=mmOf(a)&&n.m<mmOf(b)))st.cls[g]=true});
+  if(ADD_A.includes(n.d)&&n.m>=780&&n.m<960)st.cls.A=true;
+  return st;
+}
+function stateText(st){
+  const cl=['A','B','C'].filter(g=>st.cls[g]);
+  if(st.eve)return '明天有活動：志工們都聚集到家人島，準備明天的場佈和接待。其他人在各島上走動，不受限制。想來幫忙，歡迎到「志工小站」。';
+  if(st.comp)return '今天 A 團出賽：A 團的小朋友都到演出島了，老師陪著去。其他團的小朋友在同心島練習。志工、家長和校友留在離島上，島上不會空空的。';
+  if(cl.length)return cl.join('、')+' 團正在上課（分部課或合奏課）：'+cl.join('、')+' 團的小朋友和老師都在同心島。離島上有志工、家長和校友陪著。';
+  return '現在沒有排課，小朋友在各座島上散步。志工、家長、校友在離島上。想看上課或比賽日的樣子，點下面的按鈕。';
+}
+function wantIsl(sp,i,st){
+  if(sp.res!=null)return sp.res;
+  if(sp.k==='V')return st.eve?2:cyc([2,2,0,3,2,1],sp.n);
+  if(sp.k==='T')return (st.comp&&sp.n===0)?0:1;
+  if(st.comp&&sp.k==='A')return 0;
+  if(st.cls[sp.k])return 1;
+  return cyc([1,1,0,3,1,0],i);
+}
+function pickW(w){const W=WSG[w.isl];let t,tries=0;do{t=W[Math.floor(Math.random()*W.length)];tries++}while(Math.hypot(t[0]-w.x,t[1]-w.y)<18&&tries<40);w.tx=t[0]+(Math.random()-.5)*8;w.ty=t[1]+(Math.random()-.5)*4}
+function placeW(w){w.el.setAttribute('transform',`translate(${w.x.toFixed(1)} ${(w.y-(w.mv?Math.abs(Math.sin(w.ph))*1.2:0)).toFixed(1)})`);w.fl.setAttribute('transform',`scale(${w.dir*w.sc} ${w.sc})`)}
+function setIsl(w,isl,instant){
+  if(w.isl===isl)return;w.isl=isl;
+  const go=()=>{const W=WSG[isl],b=W[Math.floor(Math.random()*W.length)];w.x=b[0]+(Math.random()-.5)*8;w.y=b[1];w.mv=false;w.wait=Math.random()*2;pickW(w);placeW(w);w.el.style.opacity=1};
+  if(instant){go();return}
+  w.el.style.opacity=0;setTimeout(go,480);
+}
+function applyState(instant){const st=simState();walkers.forEach((w,i)=>setIsl(w,wantIsl(SPEC[i],i,st),instant));$('#nowTxt').textContent=stateText(st)}
+function startWalkers(){
+  WSG=ISLES.map(s=>s.z.map(id=>id==='dock'?[ANCH.dock[0]+12,ANCH.dock[1]+12]:[ANCH[id][0],ANCH[id][1]+14]).concat([[s.c[0],s.c[1]+6],[s.c[0]-38,s.c[1]+8],[s.c[0]+38,s.c[1]+8]]));
+  cancelAnimationFrame(raf2);clearInterval(stTimer);
+  SPEC=figSpec();const st0=simState(),own=SPEC.map((sp,i)=>wantIsl(sp,i,st0));
+  const g=$('#walkers');
+  g.innerHTML=SPEC.map((sp,i)=>{const k=sp.k,sc=k==='T'?1.7:1.35;return `<g class="wk"><g class="fl">${walkerSvg(BODY[k],k==='T'?'b':WINST[i%WINST.length])}</g><g class="bd" transform="translate(0 ${(-(13.2*sc+5)).toFixed(1)})"><circle r="4.2" fill="${GCOL[k]}" stroke="#fff" stroke-width=".8"/><text x="0" y=".4" text-anchor="middle" dominant-baseline="central" font-size="5" font-weight="700" fill="#fff" style="font-family:var(--f-body)">${GLAB[k]}</text></g></g>`}).join('');
+  walkers=[...g.children].map((el,i)=>{const isl=own[i],W=WSG[isl],b=W[i%W.length],w={isl,sc:SPEC[i].k==='T'?1.7:1.35,el,fl:el.firstChild,l1:el.querySelector('.l1'),l2:el.querySelector('.l2'),x:b[0]+(Math.random()-.5)*10,y:b[1],sp:10+Math.random()*7,wait:Math.random()*3,ph:0,dir:1,mv:false};pickW(w);return w});
+  walkers.forEach(placeW);
+  $('#nowTxt').textContent=stateText(st0);
+  stTimer=setInterval(()=>applyState(false),20000);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  let last=0;
+  const tick=t=>{
+    const dt=Math.min(.05,(t-last)/1000||0);last=t;
+    walkers.forEach(w=>{
+      if(w.wait>0){w.wait-=dt;w.mv=false}
+      else{const dx=w.tx-w.x,dy=w.ty-w.y,d=Math.hypot(dx,dy);
+        if(d<1.5){w.wait=1.5+Math.random()*4;pickW(w);w.mv=false}
+        else{const st=Math.min(w.sp*dt,d);w.x+=dx/d*st;w.y+=dy/d*st;w.mv=true;if(Math.abs(dx)>1)w.dir=dx>0?1:-1;w.ph+=dt*11}}
+      const sw=w.mv?Math.sin(w.ph)*2.2:0;
+      w.l1.setAttribute('x2',(-1.2+sw).toFixed(2));w.l2.setAttribute('x2',(1.2-sw).toFixed(2));placeW(w);
+    });
+    raf2=requestAnimationFrame(tick);
+  };
+  raf2=requestAnimationFrame(tick);
+  g.onclick=ev=>{if(ev.target.closest('.wk')){const n=[261.6,293.7,329.6,392,440,523.3];tone([n[Math.floor(Math.random()*n.length)]])}};
+}
+function startNotes(){
+  const cs=['#FFFFFF','#FFF3B0','#F5A04A'],sp=[];
+  [['inst',[[-8,-8],[8,-12]]],['net',[[-8,-12],[6,-8],[-16,-6]]],['comp',[[-6,-12],[8,-8]]],['honor',[[0,-6]]],['map',[[18,-6]]]].forEach(([id,o])=>o.forEach(d=>sp.push([ANCH[id][0]+d[0],ANCH[id][1]+d[1]])));
+  $('#notes').innerHTML=sp.map((p,i)=>noteSvg(p[0],p[1],i,cs[i%3])).join('');
+}
+function ferrySvg(){
+  const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const boat=(d,dur,begin)=>{const m=/M(\d+) (\d+)/.exec(d);return `<g ${rm?`transform="translate(${m[1]} ${m[2]})"`:''}><g transform="scale(1.15)"><polygon points="-7,0 7,0 5,4 -5,4" fill="#F7F0DC"/><polygon points="-7,0 7,0 6.6,1.6 -6.6,1.6" fill="#C65A43"/><line x1="0" y1="-12" x2="0" y2="0" stroke="#7A5A3A" stroke-width="1.2"/><polygon points="1,-11 1,-1 8,-1" fill="#F5A04A"/></g>${rm?'':`<animateMotion dur="${dur}s" begin="${begin}s" repeatCount="indefinite" path="${d}" keyPoints="0;1;0" keyTimes="0;.5;1" calcMode="linear"/>`}</g>`};
+  const line=d=>`<path d="${d}" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.8" stroke-dasharray="1 5" stroke-linecap="round"/>`;
+  const dur=[40,55,46,60,26],bg=[-8,-20,-5,-30,-6];
+  return `<g id="ferries" pointer-events="none">${ROUTES.map(line).join('')}${ROUTES.map((d,i)=>boat(d,dur[i],bg[i])).join('')}</g>`;
+}
+const bird=(x,y,k,dur,dl)=>`<g class="bird" style="animation-duration:${dur}s;animation-delay:${dl}s"><path transform="translate(${x} ${y}) scale(${k})" d="M0 0q3-4 6 0q3-4 6 0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></g>`;
+function buildScene(){
+  R=rng(11);
+  const polys=ISLES.map((s,i)=>{const r=rng(40+i*7),rot=r()*6.28,pts=[];for(let k=0;k<11;k++){const a=rot+k*2*Math.PI/11,f=.92+r()*.14;pts.push([s.c[0]+Math.cos(a)*s.rx*f,s.c[1]+Math.sin(a)*s.ry*f])}return pts});
+  const outer=polys.map(q=>smooth(q,0)),cliff=polys.map(q=>smooth(q,16)),shadow=polys.map(q=>smooth(q,28));
+  const sc=(i,k)=>polys[i].map(([x,y])=>[ISLES[i].c[0]+(x-ISLES[i].c[0])*k,ISLES[i].c[1]+(y-ISLES[i].c[1])*k]);
+  const inner=ISLES.map((_,i)=>sc(i,.8)),wide=ISLES.map((_,i)=>sc(i,1.2)),tight=ISLES.map((_,i)=>sc(i,1.05));
+  const inAny=(pt,arr)=>arr.some(pg=>inPoly(pt,pg));
+  /* low-poly hills: a jittered triangle grid, shaded by slope and height */
+  const GX=24,GY=20,rows=[];
+  for(let j=0;j<=LAY.rows;j++){rows[j]=[];for(let i=0;i<=LAY.cols;i++)rows[j].push([i*GX+(j%2?GX/2:0)-14+(R()-.5)*9,j*GY+(R()-.5)*7])}
+  const L=[-.45,-.55,.7],tri=[];
+  const addT=(a,b,c)=>{
+    if(!inAny([(a[0]+b[0]+c[0])/3,(a[1]+b[1]+c[1])/3],tight))return;
+    const z=p=>hgt(p[0],p[1]),za=z(a)*46,zb=z(b)*46,zc=z(c)*46,hAvg=(z(a)+z(b)+z(c))/3;
+    const u=[b[0]-a[0],b[1]-a[1],zb-za],v=[c[0]-a[0],c[1]-a[1],zc-za];
+    let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];if(n[2]<0)n=n.map(q=>-q);
+    const len=Math.hypot(...n)||1,d=(n[0]*L[0]+n[1]*L[1]+n[2]*L[2])/len;
+    const l=Math.max(40,Math.min(78,57+hAvg*5+(d-.7)*95+(R()-.5)*4)),f=`hsl(${(92-hAvg*5+(R()-.5)*4).toFixed(0)} ${(26+hAvg*6).toFixed(0)}% ${l.toFixed(0)}%)`;
+    tri.push(`<polygon points="${P([a,b,c])}" fill="${f}" stroke="${f}" stroke-width=".6"/>`);
+  };
+  for(let j=0;j<LAY.rows;j++)for(let i=0;i<LAY.cols;i++){
+    const A=rows[j],B=rows[j+1];
+    if(j%2===0){addT(A[i],A[i+1],B[i]);addT(B[i],A[i+1],B[i+1])}
+    else{addT(A[i],A[i+1],B[i+1]);addT(A[i],B[i+1],B[i])}
+  }
+  /* things standing on the islands, sorted back to front */
+  const items=[];
+  Object.keys(ANCH).forEach(id=>{const[ax,ay]=ANCH[id];items.push([ay,`<g transform="translate(${ax} ${ay}) scale(1.25) translate(${-ax} ${-ay})">${BUILD[id](ax,ay)}</g>`])});
+  const placed=[];
+  ISLES.forEach((s,k)=>{
+    let cnt=0;
+    for(let n=0;n<700&&cnt<4+Math.min(8,Math.ceil(GL.trees/4));n++){
+      const x=s.c[0]+(R()*2-1)*s.rx,y=s.c[1]+(R()*2-1)*s.ry;
+      if(!inPoly([x,y],inner[k]))continue;
+      if(Object.values(ANCH).some(a=>Math.hypot(a[0]-x,(a[1]-y)*1.3)<40))continue;
+      if(placed.some(p=>Math.hypot(p[0]-x,p[1]-y)<20))continue;
+      if(k===0&&x<ANCH.dock[0]+8&&y>ANCH.dock[1]-14)continue;
+      placed.push([x,y,6+R()*3.5,Math.floor(R()*3)]);cnt++;
+    }
+  });
+  /* my own little trees: one for every day this phone opened the island (up to 12), standing on 同心島 */
+  const mine=[];
+  for(let n=0;n<900&&mine.length<GL.mine;n++){
+    const k=1,sc=ISLES[k],x=sc.c[0]+(R()*2-1)*sc.rx,y=sc.c[1]+(R()*2-1)*sc.ry;
+    if(!inPoly([x,y],inner[k]))continue;
+    if(Object.values(ANCH).some(a=>Math.hypot(a[0]-x,(a[1]-y)*1.3)<34))continue;
+    if(placed.concat(mine).some(q=>Math.hypot(q[0]-x,q[1]-y)<15))continue;
+    mine.push([x,y,6.5,1]);
+  }
+  mine.forEach(q=>{const X=Math.round(q[0]*10)/10,Y=Math.round(q[1]*10)/10;items.push([Y,tree(X,Y,q[2],q[3])+`<path d="M${X} ${Y-q[2]*2.9-7}l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#FFD54A" stroke="#C98A00" stroke-width=".5"/>`])});
+  placed.forEach(p=>items.push([p[1],tree(Math.round(p[0]*10)/10,Math.round(p[1]*10)/10,p[2],p[3])]));
+  items.sort((a,b)=>a[0]-b[0]);
+  /* sea decoration */
+  let sea='';
+  for(let n=0;n<60&&sea.split('<polygon').length<16;n++){
+    const cx=-20+R()*(LAY.W+40),cy=R()*LAY.H;if(inAny([cx,cy],wide))continue;
+    const r=28+R()*34,a0=R()*6.28,pp=[0,1,2].map(k=>[cx+Math.cos(a0+k*2.1)*r,cy+Math.sin(a0+k*2.1)*r*.7]);
+    sea+=`<polygon points="${P(pp)}" fill="${R()>.5?'#fff':'#0E7C86'}" opacity=".07"/>`;
+  }
+  for(let n=0;n<120&&sea.split('class="wv"').length<19;n++){
+    const x=-10+R()*(LAY.W-20),y=R()*(LAY.H-20);if(inAny([x,y],wide))continue;sea+=wave(x.toFixed(0),y.toFixed(0),.8+R()*.6,(R()*4).toFixed(1));
+  }
+  const lab=ISLES.map(s=>{const t=s.name,w=t.length*11+18,x=s.lab[0],y=s.lab[1];
+    return `<g transform="translate(${x} ${y})" pointer-events="none"><rect x="${-w/2}" y="-9" width="${w}" height="18" rx="9" fill="#FFF8E6" opacity=".95"/><text class="il" x="0" y="1">${t}</text></g>`}).join('');
+  SC.innerHTML=`<defs>
+    <filter id="bl" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+    <linearGradient id="cl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9A57A"/><stop offset="1" stop-color="#8A7852"/></linearGradient>
+    <linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A4C" stop-opacity=".34"/><stop offset=".6" stop-color="#E07A9A" stop-opacity=".14"/><stop offset="1" stop-color="#3C3C8C" stop-opacity=".16"/></linearGradient>
+    <clipPath id="lc">${outer.map(d=>`<path d="${d}"/>`).join('')}</clipPath></defs>
+    <g id="sea">${sea}</g>
+    <g id="land">
+      ${LAY.islets.map(a=>islet(...a)).join('')}
+      ${shadow.map(d=>`<path d="${d}" fill="#0B5560" opacity=".28" filter="url(#bl)"/>`).join('')}
+      ${outer.map(d=>`<path d="${d}" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="30" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="18" stroke-linejoin="round"/>`).join('')}
+      ${cliff.map(d=>`<path d="${d}" fill="url(#cl)" stroke="#8A7852" stroke-width="3" stroke-linejoin="round"/>`).join('')}
+      ${outer.map(d=>`<path d="${d}" fill="#EADFB6" stroke="#EADFB6" stroke-width="9" stroke-linejoin="round"/>`).join('')}
+      <g clip-path="url(#lc)">${tri.join('')}</g>
+      ${items.map(i=>i[1]).join('')}
+    </g>
+    ${ferrySvg()}<g id="isl">${lab}</g><g id="walkers"></g><g id="notes"></g>
+    <g id="mood"></g>
+    <g id="clouds">${LAY.clouds.map(a=>cloud(...a)).join("")}${LAY.birds.map(a=>bird(...a)).join("")}</g>
+    <g id="pills"></g>`;
+}
+
+/* ---------- mood + labels: these change with the date ---------- */
+function renderMood(){
+  const m=curMode();let h='';
+  if(m==='day'){
+    h+=`<rect x="-60" y="-60" width="${LAY.W+120}" height="${LAY.H+160}" fill="#FFE9A8" opacity=".14"/>`;
+    const[ax,ay]=ANCH.dock,p0=[ax-31,ay-17],p1=[ax,ay+1],p2=[ax+31,ay-23],cols=['#E0705A','#F5A04A','#FFD25E','#7FA8D6','#8DB06A'];
+    h+=`<path d="M${p0} Q${p1} ${p2}" fill="none" stroke="#6B4E32" stroke-width="1.4"/>`;
+    for(let i=1;i<=9;i++){const t=i/10,x=(1-t)**2*p0[0]+2*(1-t)*t*p1[0]+t*t*p2[0],y=(1-t)**2*p0[1]+2*(1-t)*t*p1[1]+t*t*p2[1];h+=poly([[x-3.2,y],[x+3.2,y],[x,y+8]],cols[i%5])}
+    [[-45,-45],[35,-53],[-5,-75],[55,-25],[-53,-5],[21,17],[-29,27],[61,7]].map(o=>[ANCH.dock[0]+o[0],ANCH.dock[1]+o[1]]).forEach((p,i)=>{
+      h+=`<path class="tw" style="animation-delay:${(i*.23).toFixed(2)}s" transform="translate(${p[0]} ${p[1]})" d="M0-5 1.2-1.2 5 0 1.2 1.2 0 5-1.2 1.2-5 0-1.2-1.2Z" fill="#FFF3B0"/>`;
+    });
+  }else if(m==='after'){
+    h+=`<rect x="-60" y="-60" width="${LAY.W+120}" height="${LAY.H+160}" fill="url(#dusk)"/>`;
+  }
+  $('#mood').innerHTML=h;
+}
+function renderPills(){
+  const m=curMode();let h='';
+  TILES.forEach((t,i)=>{
+    const[bx,by]=ANCH[t.id],no=String(i+1).padStart(2,'0'),w=pillW(t),hot=t.id==='dock'&&m!=='after';
+    let bub='';
+    const mkBub=(txt,sh)=>{const bw=Math.round(txt.length*10.5+18);return `<g transform="translate(${sh} -30)" pointer-events="none"><rect x="${-bw/2}" y="-11" width="${bw}" height="20" rx="10" fill="#FFF8E6"/><polygon points="${-sh-5},8 ${-sh+5},8 ${-sh},14" fill="#FFF8E6"/><text class="bt" x="0" y="0">${txt}</text></g>`};
+    if(t.id==='dock')bub=mkBub({before:'明天 09:30',day:'今天登場！',after:'下一場 11/19'}[m],-2);
+    if(t.id==='comp')bub=mkBub('本週：'+COMPOSERS[weekComposer()].n,-14);
+    if(t.id==='vol'){const e=simState().eve;if(e||GROW.v<GROW.vgoal)bub=mkBub(e?'志工集合中':'徵求志工！',22)}
+    h+=`<g transform="translate(${bx} ${by-58})"><g class="bob" style="animation-delay:${(i*.37).toFixed(2)}s">${bub}
+      <g class="pill" data-id="${t.id}" tabindex="0" role="button" aria-label="${no} ${t.name}：${t.hint()}">
+        <rect x="${-w/2-6}" y="-22" width="${w+12}" height="60" fill="transparent"/>
+        <line class="stem" x1="0" y1="13" x2="0" y2="29"/>
+        ${hot?`<rect class="ring" x="${-w/2}" y="-13" width="${w}" height="26" rx="13"/>`:''}
+        <rect class="pb" x="${-w/2}" y="-13" width="${w}" height="26" rx="13"/>
+        <circle cx="${-w/2+14}" cy="0" r="9" fill="#FFF8E6"/>
+        <text class="pn" x="${-w/2+14}" y="1">${no}</text>
+        <text class="pt" x="${-w/2+28}" y="1">${t.name}</text>${STAMPS.has(t.id)?chkSvg(w):''}
+      </g></g></g>`;
+  });
+  $('#pills').innerHTML=h;
+}
+function renderBanner(){
+  const m=curMode(),n=dayDiff(todayTW(),EVENT.date),el=$('#banner');let big,kk,tt,ff;
+  if(m==='before'){const k=MODE==='auto'?Math.max(n,1):1;big=`<b>${k}</b><i>天後</i>`;kk='倒數';tt=`《${EVENT.name}》`;ff=`10/26（${EVENT.dow}）${EVENT.time}<br>${EVENT.place}`}
+  else if(m==='day'){big='<b class="s">今天</b>';kk='就是今天';tt=`《${EVENT.name}》`;ff=`${EVENT.time}<br>${EVENT.place}`}
+  else{const c=dayDiff(todayTW(),COMP.date);big=c>0?`<b>${c}</b><i>天後</i>`:'<b class="s">比賽</b>';kk='交流音樂會結束　下一站市賽';tt=COMP.name;ff=`11/19（四）${COMP.time}<br>${COMP.place}　出場序 7`}
+  el.innerHTML=`<span class="big">${big}</span><span><span class="kk">${kk}</span><span class="tt">${tt}</span><span class="ff">${ff}</span></span><span class="go" aria-hidden="true">›</span>`;
+  el.setAttribute('aria-label',`${kk}，${tt.replace(/[《》]/g,'')}，點一下看活動預告`);
+}
+function renderGuide(){
+  const g=$('#guide');if(!g)return;
+  g.innerHTML=`<h2>島嶼導覽 <small>${ISLES.length} 座島、${TILES.length} 個地點</small></h2>`+ISLES.map(s=>`<div class="gt">${s.name}</div><div class="list">${s.z.map(id=>{const t=TILES.find(x=>x.id===id),n=String(TILES.indexOf(t)+1).padStart(2,'0');return `<button class="li" data-go="${id}"><span class="no">${n}</span><span><b>${t.name}</b><br><span class="note">${t.hint()}</span></span>${STAMPS.has(id)?'<span class="ok">✓</span>':''}</button>`}).join('')}</div>`).join('');
+}
+function refresh(){renderBanner();renderMood();renderPills();renderGuide()}
+
+/* ---------- camera: zoom the viewBox toward a place ---------- */
+const applyVB=()=>SC.setAttribute('viewBox',vb.map(v=>v.toFixed(1)).join(' '));
+function setVB(t,ms,cb){
+  cancelAnimationFrame(raf);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!ms){vb=t.slice();applyVB();cb&&cb();return}
+  const f=vb.slice(),s=performance.now();
+  const step=now=>{const k=Math.min(1,(now-s)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;vb=f.map((v,i)=>v+(t[i]-v)*e);applyVB();if(k<1)raf=requestAnimationFrame(step);else cb&&cb()};
+  raf=requestAnimationFrame(step);
+}
+function openZone(id){lastFocus=document.activeElement;openSheet(id)}
+
+/* ---------- sheets ---------- */
+function openSheet(id){
+  const T=TILES.find(t=>t.id===id);
+  if(!lastFocus)lastFocus=document.activeElement;
+  $('#sheet-title').textContent=T?T.name:(id==='grow'?'島的成長':'全部地點');
+  $('#sheet-body').innerHTML=VIEWS[id]();
+  const fresh=T&&addStamp(id),done=fresh&&STAMPS.size>=TILES.length;
+  if(done){$('#sheet-body').insertAdjacentHTML('afterbegin','<div class="box" style="border-color:var(--orange);margin-bottom:10px"><b style="font-family:var(--f-display)">全島探索完成！</b><p style="margin:4px 0 8px">十個地點你都走過了。送你一小段歡樂頌。</p><button class="play" id="odeBtn">聽一聽</button></div>');$('#odeBtn').onclick=()=>tone(ODE)}
+  $('#veil').hidden=false;
+  document.body.style.overflow='hidden';
+  $('.sheet').scrollTop=0;
+  if(INIT[id])INIT[id]();
+  $('#close').focus();
+}
+function closeSheet(){if(typeof melStop!=="undefined"&&melStop)melStop();
+  $('#veil').hidden=true;document.body.style.overflow='';
+  if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  lastFocus=null;
+}
+
+const VIEWS={
+  dock(){
+    const m=curMode();
+    const lead={before:'明天出發前，先看這一頁。',day:'今天現場資訊都在這裡。',after:'謝謝大家，這是這場演出的紀錄。'}[m];
+    return `<p>${lead}</p>
+    <div class="box"><dl class="kv">
+      <dt>活動</dt><dd>${EVENT.sub}</dd>
+      <dt>日期</dt><dd>10 月 26 日（${EVENT.dow}）</dd>
+      <dt>進場</dt><dd>${EVENT.time}</dd>
+      <dt>地點</dt><dd>${EVENT.place}</dd>
+    </dl></div>
+    <h3>九所學校</h3>
+    <div class="cols2">
+      <div class="box"><h4>國小組</h4><ul>${EVENT.primary.map(s=>`<li${s==='中和國小'?' style="font-weight:700;color:var(--orange)"':''}>${s}</li>`).join('')}</ul></div>
+      <div class="box"><h4>國中組</h4><ul>${EVENT.junior.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    </div>
+    <h3>交流音樂會的曲目</h3>
+    <div class="todo">曲目和上場順序確定後，會補在這一格。</div>
+    <h3>下一站：正式比賽</h3>
+    <div class="box"><dl class="kv">
+      <dt>比賽</dt><dd>${COMP.name}</dd>
+      <dt>日期</dt><dd>11 月 19 日（星期四）${COMP.time}</dd>
+      <dt>地點</dt><dd>${COMP.place}</dd>
+      <dt>組別</dt><dd>${COMP.group}</dd>
+      <dt>場次</dt><dd>${COMP.slot}</dd>
+      <dt>指定曲</dt><dd>${COMP.own}<br><span class="note">${COMP.by}</span></dd>
+      <dt>自選曲</dt><dd>公布後補上</dd>
+    </dl></div>
+    <h3>聽前導讀</h3>
+    <div class="box"><span class="ai">AI 改寫</span>約翰・拉特（John Rutter）是英國作曲家，1945 年出生，最有名的是合唱作品，不論神聖或世俗的歌曲都寫。所以看到他的名字出現在器樂曲上，聽眾常會有點驚訝。1971 年，他寫了這部弦樂組曲。英國有把民謠大方端上舞台的老傳統，這部組曲的每個樂章，都取材自一首英格蘭或蘇格蘭的傳統旋律。比賽的指定曲，是第一樂章〈A-Roving〉。</div>
+    <p class="note">10 月 26 日的交流音樂會，是為 11 月 19 日暖身。</p>
+    ${m==='after'?'<h3>回顧</h3><p class="note">交流音樂會的照片與花絮整理好之後，會放到粉專。這一格也會更新。</p>':''}
+    <p class="note">音樂讓我們相遇，也讓我們走得更遠。</p>`;
+  },
+  map(){
+    return `<div class="filters" id="flt">${['全部','招生','演出','比賽','畢業','日常'].map((c,i)=>`<button class="chip" data-c="${c}" aria-pressed="${i===0}">${c}</button>`).join('')}</div><ol class="tl" id="tl"></ol><p class="note">日期標「月」的貼文沒有寫明確日期，排序依貼文先後推算。</p>`;
+  },
+  day(){
+    return `<p>三個團的上課時間不一樣。選一個團，看看一週怎麼過。</p>
+    <div class="filters" id="gsel">${['A','B','C'].map((g,i)=>`<button class="chip" data-g="${g}" aria-pressed="${i===0}">${g} 團</button>`).join('')}</div>
+    <div class="box" id="nextc" aria-live="polite"></div>
+    <ol class="steps wk" id="wk"></ol>
+    <div id="cmpt"></div>
+    <h3>這學期的大日子</h3>
+    <div class="box"><dl class="kv"><dt>10/26</dt><dd>九校弦樂交流音樂會</dd><dt>11/19</dt><dd>新北市學生音樂比賽（A 團）</dd><dt>12/30</dt><dd>期末成果發表會　晚上 6:30</dd><dt>1/25–29</dt><dd>寒訓</dd></dl></div>
+    <p class="note">期中考前、國定假日會停課，請以學校與老師的公告為準。</p>
+    <details style="margin-top:12px"><summary class="note" style="cursor:pointer">暑訓的一個早上</summary><ol class="steps" style="margin-top:8px">
+      <li><time>8:30</time><span>抵達分部教室，打開琴盒、調音、架起譜架。</span></li>
+      <li><time>10:00</time><span>走進合奏教室，和熟悉的夥伴打招呼，也照顧新加入的學弟妹。</span></li>
+      <li><time>　</time><span>合奏中學著專注、合作、堅持。</span></li></ol></details>`;
+  },
+  inst(){
+    return `<p>四種樂器的音域差很多。點一下卡片，聽聽它四條空弦的音高。</p>
+    <div class="inst" id="inst">${Object.keys(STRINGS).map(k=>`<button class="box" data-i="${k}" style="text-align:left"><b>${k}</b><span>${STRINGS[k].d}</span><span>空弦 ${STRINGS[k].n}</span></button>`).join('')}</div>
+    <h3>猜猜這是誰</h3>
+    <div class="quiz">
+      <button class="play" id="qplay">播放一段</button>
+      <div class="opts" id="qopts"></div>
+      <div class="msg" id="qmsg" aria-live="polite"></div>
+    </div>
+    <p class="note">這裡的聲音由手機合成，只用來示範音域高低，不是真正的琴聲。</p>`;
+  },
+  story(){
+    return `<p><span class="ai">AI 改寫</span>根據粉專貼文，改成孩子也讀得懂的短故事。</p>`+STORIES.map(s=>`<div class="box" style="margin-top:10px"><b style="font-family:var(--f-display)">${s.t}</b><p>${s.x}</p></div>`).join('');
+  },
+  net(){
+    return `<p>中和弦是一個大家庭：孩子在台上拉琴，老師帶著練，家長和後援會在後面陪著。點一個圓圈，看看大家各自在做什麼。</p>
+    <svg class="graph" id="graph" viewBox="0 0 360 350" role="group" aria-label="關於中和弦的關係圖"></svg>
+    <div class="box" id="nodeTxt" aria-live="polite"></div><p class="note" style="margin-top:12px">想認識老師們？<button class="chip" data-go="tch">去師資團隊看看</button>　想一起幫忙嗎？<button class="chip" data-go="vol">去志工小站看看</button></p>`;
+  },
+  honor(){
+    return `<h3>臺北文化盃音樂大賽</h3><div class="box">${HONORS.map(h=>`<div class="honor"><span><b>${h.n}</b><br><span class="note">${h.g}</span></span><span class="badge">${h.a}</span></div>`).join('')}</div>
+    <p class="note">一個人站上舞台獨奏，每一次勇敢挑戰，都是音樂路上重要的一步。</p>
+    <h3>114 學年度畢業生</h3><div class="box"><p style="margin:0">七位畢業生，完成了六年的弦樂旅程，也完成了屬於自己的畢業評鑑。</p></div>
+    <h3>接下來</h3><div class="box"><p style="margin:0">11 月 19 日下午 1:00，三和國中音樂廳，新北市學生音樂比賽弦樂合奏。團員正在加緊練習。</p></div>`;
+  },
+  ask(){
+    return `<p><span class="ai">AI 小幫手</span>輸入想問的事，或點下面的問題。</p>
+    <div class="filters" id="sug">${['需要基礎嗎？','有哪些樂器？','怎麼報名？','想當志工可以做什麼？','明天演出在哪裡？'].map(q=>`<button class="chip">${q}</button>`).join('')}</div>
+    <form class="faq-in" id="faqf"><input id="faqi" type="text" placeholder="例如：暑訓是什麼" autocomplete="off"><button type="submit">問問看</button></form>
+    <div class="box ans" id="ans">答案會顯示在這裡。</div>
+    <p class="note">小幫手只回答已經公開在貼文裡的內容。其他問題，請到粉專留言。</p>`;
+  }
+};
+const INIT={
+  map(){
+    const draw=c=>{
+      $('#tl').innerHTML=TL.filter(e=>c==='全部'||e.c===c).map(e=>`<li class="${e.next?'next':''}"><div class="d">${e.ds}<span class="c">${e.c}</span></div><div class="t">${e.t}</div><p>${e.x}</p></li>`).join('');
+    };
+    draw('全部');
+    $('#flt').addEventListener('click',ev=>{
+      const b=ev.target.closest('button');if(!b)return;
+      document.querySelectorAll('#flt .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+      draw(b.dataset.c);
+    });
+  },
+  day(){
+    const WD=['日','一','二','三','四','五','六'];
+    const SCH={
+      A:[[2,'07:50–08:30','晨練','上課前的早晨練習時間。'],[3,'12:40–14:10','分部課','同一種琴的同學一起上，老師帶著練自己的聲部。'],[5,'07:50–08:30','晨練','早上到校，先把琴拿出來練。'],[5,'16:10–17:40','合奏課','三個聲部合在一起，跟著指揮把曲子拼完整。']],
+      B:[[3,'07:50–08:30','晨練','上課前的早晨練習時間。'],[3,'12:40–14:10','分部課','同一種琴的同學一起上，老師帶著練自己的聲部。'],[5,'16:10–17:40','合奏課','三個聲部合在一起，跟著指揮把曲子拼完整。']],
+      C:[[5,'16:10–17:40','合奏課','從個別課走進合奏教室，學著跟指揮一起呼吸。']]
+    };
+    let G='A';
+    const dow=()=>new Date(todayTW()+'T00:00:00Z').getUTCDay();
+    const draw=()=>{
+      const L=SCH[G],td=dow();let nx=null,nk=0;
+      for(let k=0;k<8&&!nx;k++){const d=(td+k)%7;const f=L.find(r=>r[0]===d);if(f){nx=f;nk=k}}
+      $('#nextc').innerHTML=nx?`<b>下一堂：</b>${nk===0?'今天':nk===1?'明天':'星期'+WD[nx[0]]} ${nx[1].slice(0,5)} ${nx[2]}`:'';
+      const days=[...new Set(L.map(r=>r[0]))];
+      $('#wk').innerHTML=days.map(d=>`<li style="${d===td?'border-color:var(--orange)':''}"><time>週${WD[d]}</time><span>${L.filter(r=>r[0]===d).map(r=>`<b>${r[2]}</b>　<span class="note">${r[1]}</span><br><span class="note">${r[3]}</span>`).join('<hr style="border:0;border-top:1px dashed var(--line);margin:6px 0">')}</span></li>`).join('');
+      $('#cmpt').innerHTML=G==='A'?`<h3>A 團的比賽加練</h3><div class="box"><p style="margin:0">為了 11/19 的新北市學生音樂比賽，A 團在賽前另外加練，每次下午 1:00 到 4:00。</p><p class="note" style="margin:6px 0 0">10/3、10/9、10/17、10/24、11/7、11/14</p></div>`:'';
+    };
+    draw();
+    $('#gsel').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;G=b.dataset.g;document.querySelectorAll('#gsel .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()});
+  },
+  inst(){
+    const names=Object.keys(STRINGS);let ans=null,streak=0;
+    $('#inst').addEventListener('click',ev=>{const b=ev.target.closest('[data-i]');if(b)tone(STRINGS[b.dataset.i].hz)});
+    const opts=$('#qopts');
+    opts.innerHTML=names.map(n=>`<button class="opt" data-n="${n}">${n}</button>`).join('');
+    $('#qplay').onclick=()=>{ans=names[Math.floor(Math.random()*4)];$('#qmsg').textContent='聽完選一個答案。';opts.querySelectorAll('.opt').forEach(o=>o.className='opt');tone(STRINGS[ans].hz)};
+    opts.addEventListener('click',ev=>{
+      const b=ev.target.closest('.opt');if(!b)return;
+      if(!ans){$('#qmsg').textContent='先按「播放一段」。';return}
+      if(b.dataset.n===ans){streak++;b.classList.add('ok');$('#qmsg').textContent='答對了！連續 '+streak+' 次。';ans=null}
+      else{streak=0;b.classList.add('no');$('#qmsg').textContent='再聽一次，可以再選。'}
+    });
+  },
+  net(){
+    const g=$('#graph');let h='';
+    EDGES.forEach(([a,b],i)=>{h+=`<line class="e" data-a="${a}" data-b="${b}" x1="${NODES[a].x}" y1="${NODES[a].y}" x2="${NODES[b].x}" y2="${NODES[b].y}"/>`});
+    Object.keys(NODES).forEach(k=>{
+      const n=NODES[k],ls=n.l;
+      h+=`<g class="n" data-k="${k}" tabindex="0" role="button" aria-label="${ls.join('')}"><circle cx="${n.x}" cy="${n.y}" r="${n.r}"/>`+
+        ls.map((t,i)=>`<text x="${n.x}" y="${n.y+(ls.length===1?4:(i===0?-2:12))}">${t}</text>`).join('')+`</g>`;
+    });
+    g.innerHTML=h;
+    const sel=k=>{
+      g.querySelectorAll('.n').forEach(n=>{n.classList.toggle('sel',n.dataset.k===k);n.classList.toggle('dim',!(n.dataset.k===k||EDGES.some(([a,b])=>(a===k&&b===n.dataset.k)||(b===k&&a===n.dataset.k))))});
+      g.querySelectorAll('.e').forEach(e=>{const on=e.dataset.a===k||e.dataset.b===k;e.classList.toggle('on',on);e.classList.toggle('dim',!on)});
+      $('#nodeTxt').innerHTML=`<b style="font-family:var(--f-display)">${NODES[k].l.join('')}</b><p style="margin:4px 0 0">${NODES[k].t}</p>`;
+    };
+    g.addEventListener('click',ev=>{const n=ev.target.closest('.n');if(n)sel(n.dataset.k)});
+    g.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){const n=ev.target.closest('.n');if(n){ev.preventDefault();sel(n.dataset.k)}}});
+    sel('kid');
+  },
+  ask(){
+    const out=q=>{
+      const s=q.replace(/\s/g,'').toLowerCase();
+      let best=null,sc=0;
+      FAQ.forEach(f=>{const c=f.k.filter(w=>s.includes(w.toLowerCase())).length;if(c>sc){sc=c;best=f}});
+      $('#ans').textContent=best?best.a:'這題我還沒學會。請到粉專留言，後援會的家長會回覆你。';
+    };
+    $('#faqf').addEventListener('submit',ev=>{ev.preventDefault();const v=$('#faqi').value.trim();if(v)out(v)});
+    $('#sug').addEventListener('click',ev=>{const b=ev.target.closest('button');if(b){$('#faqi').value=b.textContent;out(b.textContent)}});
+  }
+};
+
+/* ---------- sound (Web Audio, started by a tap) ---------- */
+function tone(hzs){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    audio=audio||new AC();if(audio.state==='suspended')audio.resume();
+    const t0=audio.currentTime+0.05;
+    hzs.forEach((f,i)=>{
+      const t=t0+i*0.42;
+      [1,2,3].forEach((mul,j)=>{
+        const o=audio.createOscillator(),g=audio.createGain(),lp=audio.createBiquadFilter();
+        o.type='sawtooth';o.frequency.value=f*mul;lp.type='lowpass';lp.frequency.value=2200;
+        const peak=[0.16,0.07,0.04][j]*(f<80?1.6:1);
+        g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+0.05);g.gain.exponentialRampToValueAtTime(0.0005,t+0.5);
+        o.connect(lp);lp.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+0.55);
+      });
+    });
+  }catch(e){}
+}
+
+/* string-like melody player: notes are [name, beats]; one tap plays, tap again stops */
+const NOTEHZ=n=>{const m=/^([A-G])(#?)(\d)$/.exec(n);const st={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]?1:0)+(+m[3]+1)*12;return 440*Math.pow(2,(st-69)/12)};
+let melStop=null;
+function playMel(notes,bpm,done){
+  try{
+    if(melStop){melStop();return}
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    audio=audio||new AC();if(audio.state==='suspended')audio.resume();
+    const master=audio.createGain();master.gain.value=.9;master.connect(audio.destination);
+    let t=audio.currentTime+.08;const sp=60/bpm,oscs=[];
+    notes.forEach(([n,b])=>{
+      const f=NOTEHZ(n),d=b*sp;
+      [-6,6].forEach(det=>{
+        const o=audio.createOscillator(),g=audio.createGain(),lp=audio.createBiquadFilter(),lfo=audio.createOscillator(),lg=audio.createGain();
+        o.type='sawtooth';o.frequency.value=f;o.detune.value=det;
+        lfo.frequency.value=5.2;lg.gain.value=f*.006;lfo.connect(lg);lg.connect(o.frequency);
+        lp.type='lowpass';lp.frequency.value=Math.min(3200,f*5);
+        g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.075,t+Math.min(.08,d*.4));
+        g.gain.setValueAtTime(.075,t+d*.75);g.gain.linearRampToValueAtTime(0,t+d*.98);
+        o.connect(lp);lp.connect(g);g.connect(master);
+        o.start(t);lfo.start(t);o.stop(t+d);lfo.stop(t+d);oscs.push(o,lfo);
+      });
+      t+=d;
+    });
+    const total=(t-audio.currentTime)*1000;
+    const tm=setTimeout(()=>{melStop=null;done&&done()},total);
+    melStop=()=>{clearTimeout(tm);master.gain.value=0;oscs.forEach(o=>{try{o.stop()}catch(e){}});melStop=null;done&&done()};
+  }catch(e){melStop=null;done&&done()}
+}
+const Q=(s,b)=>s.split(' ').map(n=>[n,b]);
+/* composers: short stories (AI-rewritten from general music history) */
+function weekComposer(){return((Math.floor(dayDiff('2026-01-05',todayTW())/7)%5)+5)%5}
+const COMPOSERS=[
+  {n:'巴赫',en:'J. S. Bach',y:'1685–1750',c:'德國',x:'出生在音樂世家。Bach 在德文裡是「小溪」。他是認真的老師，為了教學生，寫了許多練習曲。',sp:'每天練一點，慢慢變大海',l:'《布蘭登堡協奏曲》、《無伴奏小提琴組曲》',mel:[...Q('G2 D3 B3 A3 B3 D3 B3 D3',.5),...Q('G2 E3 C4 B3 C4 E3 C4 E3',.5),['G3',2]],mt:'大提琴組曲前奏曲的開頭',bpm:110},
+  {n:'韋瓦第',en:'A. Vivaldi',y:'1678–1741',c:'義大利',x:'頭髮是紅色的，大家叫他「紅髮神父」。他在威尼斯一所音樂學校教書，替學生寫了很多曲子。',sp:'把音樂送給孩子',l:'《四季》',mel:[['E5',1],...Q('E5 E5',.5),['D#5',.5],['E5',.5],['F#5',1],...Q('G#5 G#5',.5),['F#5',.5],['G#5',.5],['A5',1],['B5',2]],mt:'《四季》春天主題（簡化）',bpm:120},
+  {n:'莫札特',en:'W. A. Mozart',y:'1756–1791',c:'奧地利',x:'五歲就開始作曲，六歲跟著家人到歐洲各地演出，也會拉小提琴。',sp:'好奇和玩心',l:'《弦樂小夜曲》、《小星星變奏曲》',mel:[['G4',1.5],['D4',.5],['G4',1],['D4',.5],['G4',.5],['D4',.5],['G4',.5],['B4',.5],['D5',1.5],['C5',1.5],['A4',.5],['C5',1],['A4',.5],['C5',.5],['A4',.5],['F#4',.5],['A4',.5],['D4',2]],mt:'《弦樂小夜曲》的開頭',bpm:132},
+  {n:'貝多芬',en:'L. van Beethoven',y:'1770–1827',c:'德國',x:'聽力漸漸變差，他沒有停下來。寫《第九號交響曲》的時候，他已經幾乎聽不見了。',sp:'不放棄',l:'《歡樂頌》（第九號交響曲）',mel:[...Q('E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4',1),['E4',1.5],['D4',.5],['D4',2]],mt:'《歡樂頌》主旋律',bpm:112},
+  {n:'柴可夫斯基',en:'P. I. Tchaikovsky',y:'1840–1893',c:'俄國',x:'本來學的是法律，二十多歲才全心走進音樂。他的《弦樂小夜曲》，是弦樂團很愛演的曲子。',sp:'換條路，也不晚',l:'《弦樂小夜曲》',mel:[['D5',1],['C#5',1],['B4',1],['A4',1],['G4',1],['F#4',1],['E4',1],['D4',2]],mt:'《弦樂小夜曲》下行旋律（簡化）',bpm:96},
+  {n:'約翰・拉特',en:'John Rutter',y:'1945 年生',c:'英國',x:'最有名的是合唱作品。這次市賽的指定曲，是他 1971 年寫的弦樂組曲，每個樂章都取材自一首英格蘭或蘇格蘭的傳統旋律。',sp:'把民謠大方端上舞台',l:'《Suite for Strings》第一樂章〈A-Roving〉（市賽指定曲）'}
+];
+VIEWS.comp=function(){
+  const card=(c,i)=>`<div class="box"><h4>${c.n}${i===weekComposer()?' <span class="ai">本週</span>':''}<span class="yr">　${c.en}｜${c.c}｜${c.y}</span></h4><p style="margin:6px 0 0">${c.x}</p><span class="sp">精神：${c.sp}</span><p class="note" style="margin:6px 0 0">弦樂團可以聽：${c.l}</p>${c.mel?`<div class="row"><button class="play" data-p="${i}" aria-pressed="false">▶ 聽弦樂：${c.mt}</button></div>`:''}</div>`;
+  return `<p><span class="ai">AI 改寫</span>最有名的五位作曲家，每一位都有一小段弦樂可以聽。</p><div class="cmp">`+
+    COMPOSERS.slice(0,5).map((c,i)=>card(c,i)).join('')+
+    `</div><h3 style="margin:18px 0 6px">比賽指定曲的作曲家</h3><div class="cmp">`+card(COMPOSERS[5],5)+
+    `</div><p class="note">旋律是用手機合成的弦樂音色，簡化演奏，不是真正的樂團錄音。想聽真正的演奏，可以搜尋上面的曲名。年代與事蹟整理自一般音樂史資料，內容經過精簡。</p>`;
+};
+INIT.comp=function(){
+  if(melStop)melStop();
+  document.querySelectorAll('.cmp [data-p]').forEach(b=>b.addEventListener('click',()=>{
+    const c=COMPOSERS[b.dataset.p];
+    const reset=()=>document.querySelectorAll('.cmp [data-p]').forEach(x=>{const k=COMPOSERS[x.dataset.p];x.textContent='▶ 聽弦樂：'+k.mt;x.setAttribute('aria-pressed','false')});
+    if(melStop){melStop();return}
+    b.textContent='■ 播放中，再點一下停止';b.setAttribute('aria-pressed','true');
+    playMel(c.mel,c.bpm,reset);
+  }));
+};
+FAQ.push({k:['晨練','分部','合奏課','課表','上課','星期','幾點上','團練'],a:'A、B、C 三團的晨練、分部課、合奏課時間，都在「團員的一天」。A 團在比賽前還有週六加練。'});
+FAQ.push({k:['作曲家','貝多芬','莫札特','巴赫','韋瓦第','柴可夫斯基','古典'],a:'島上的「作曲家」小屋，有巴赫、韋瓦第、莫札特、貝多芬、柴可夫斯基，還有比賽指定曲的作曲家拉特，每位都能聽一小段弦樂。'});
+
+/* ---------- growth view ---------- */
+const bar=(l,n)=>`<div class="gbar">${Array.from({length:5},(_,i)=>`<i class="${i<=l?'on':''}"></i>`).join('')}</div>`;
+const nextTxt=(v,st,l,unit)=>l>=st.length-1?'已經到最高等級了':`再 ${st[l+1]-v} ${unit}，升到下一級`;
+let ADMIN=false,DBREF=null;
+VIEWS.grow=function(){
+  const fl=GL.f,hl=GL.h,left=MIN_PER_TREE-(GROW.minutes%MIN_PER_TREE),tot=GROW.a+GROW.b+GROW.c;
+  return `<p>這座島會長大。大家一起努力，森林會變茂密、島上的人會隨著招生和畢業增減。</p>
+  <div class="box"><h4>森林：${F_NAMES[fl]}（${GL.trees} 棵）</h4>${bar(fl)}<p style="margin:6px 0 0">全團累積練習 <b>${GROW.minutes.toLocaleString()}</b> 分鐘。每累積 ${MIN_PER_TREE.toLocaleString()} 分鐘，島上長出一棵樹；再 ${left.toLocaleString()} 分鐘就多一棵。</p><p class="note" style="margin:4px 0 0">只算全團的合計，不會顯示任何一位孩子的分鐘數。</p></div>
+  <div class="box" style="margin-top:10px"><h4>島上的人：團員 ${tot} 位、老師 ${GROW.t} 位</h4><p style="margin:6px 0 0"><span class="gdot" style="background:${GCOL.A}">A</span> A 團 ${GROW.a} 位　<span class="gdot" style="background:${GCOL.B}">B</span> B 團 ${GROW.b} 位　<span class="gdot" style="background:${GCOL.C}">C</span> C 團 ${GROW.c} 位　<span class="gdot" style="background:${GCOL.T}">師</span> 老師 ${GROW.t} 位</p><p class="note" style="margin:4px 0 0">島上每個小人頭上的圓點，標示他是哪一團的團員或老師。每 ${PER_FIG} 位團員用 1 個小人代表。招生、畢業時更新人數，小人就跟著增減。</p></div>
+  <div class="box" style="margin-top:10px"><h4>志工：${GROW.v} 位／目標 ${GROW.vgoal} 位</h4><p style="margin:6px 0 0">家人島上的「志」字小人就是志工。每多一位，島上多一位；演出前一天，大家會聚集到家人島。想加入，到「志工小站」。</p></div>
+  <div class="box" style="margin-top:10px"><h4>人氣：${H_NAMES[hl]}</h4>${bar(hl)}<p style="margin:6px 0 0">想加入、來詢問的朋友 <b>${GROW.friends}</b> 位，每位在島上是一個頭上有「新」字的小旅人（最多顯示 6 位）。</p></div>
+  <div class="box" style="margin-top:10px"><h4>我的小樹：${GL.mine} 棵</h4><p style="margin:6px 0 0">每天打開一次音樂島，同心島上就多長一棵有金星的小樹（最多 12 棵）。已經來過 <b>${MYDAYS.length}</b> 天。</p><p class="note" style="margin:4px 0 0">這只存在你自己的手機，不會傳給任何人。</p></div>
+  <div id="adm"></div>`;
+};
+INIT.grow=function(){
+  if(!ADMIN)return;
+  const f=(id,l,v)=>`<label class="lbl">${l}<input id="${id}" type="number" min="0" inputmode="numeric" value="${v}"></label>`;
+  $('#adm').innerHTML=`<div class="box" style="margin-top:12px;border-color:var(--orange)"><h4>管理者專用：更新數字</h4>${f('gM1','全團累積練習分鐘',GROW.minutes)}${f('gA','A 團人數',GROW.a)}${f('gB','B 團人數',GROW.b)}${f('gC','C 團人數',GROW.c)}${f('gT','老師人數',GROW.t)}${f('gF','想加入、來詢問的朋友（位）',GROW.friends)}${f('gV','志工家長（位，離島上顯示）',GROW.v)}${f('gVG','志工招募目標（位）',GROW.vgoal)}${f('gP','一般家長（位，離島上顯示）',GROW.p)}${f('gU','校友（位，校友島上顯示）',GROW.u)}<button class="play" id="gS" style="margin-top:8px">儲存，讓島長大</button><p class="note" id="gMsg" style="margin:6px 0 0">只填數字，不要寫姓名。</p></div>`;
+  $('#gS').onclick=async()=>{
+    const n=id=>Math.max(0,Math.floor(+$(id).value||0));
+    try{await DBREF.doc('island/state').set({minutes:n('#gM1'),a:n('#gA'),b:n('#gB'),c:n('#gC'),t:n('#gT'),friends:n('#gF'),v:n('#gV'),vgoal:n('#gVG'),p:n('#gP'),u:n('#gU')});$('#gMsg').textContent='已儲存。所有人重新整理後會看到變化。'}
+    catch(e){$('#gMsg').textContent='儲存失敗，請稍後再試。'}
+  };
+};
+function regrow(){calcGL();buildScene();startWalkers();startNotes();refresh();updateGrowBtn()}
+function updateGrowBtn(){const b=$('#bGrow');if(b)b.querySelector('span').textContent='成長'}
+(async()=>{
+  try{
+    if(!(window.claude&&claude.use))return;
+    const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
+    if(!db)return;DBREF=db;
+    try{ADMIN=!!(user&&await user.canEdit())}catch(e){}
+    db.doc('island/state').onSnapshot(sn=>{
+      if(!sn.exists)return;const d=sn.data()||{};let ch=false;
+      ['minutes','a','b','c','t','friends','v','vgoal','p','u'].forEach(k=>{if(typeof d[k]==='number'&&d[k]>=0&&d[k]!==GROW[k]){GROW[k]=d[k];ch=true}});
+      if(!ch)return;regrow();
+      if(!$('#veil').hidden&&$('#sheet-title').textContent==='島的成長'){$('#sheet-body').innerHTML=VIEWS.grow();INIT.grow()}
+    },()=>{});
+  }catch(e){}
+})();
+
+VIEWS.alum=function(){
+  if(!ALUMNI.length)return `<p>從中和弦畢業的孩子，會在這裡留下名字。</p><div class="box"><p style="margin:0">名單整理中。放上來之前，會先取得家長同意，姓名也會遮住一個字（例如：顏○真）。</p></div>`;
+  const ys=[...new Set(ALUMNI.map(a=>a.y))].sort().reverse();
+  return `<p>畢業生共 <b>${ALUMNI.length}</b> 位。姓名遮住一個字，點年度可以篩選。</p><div class="filters" id="ay"><button class="chip" aria-pressed="true" data-y="">全部</button>${ys.map(y=>`<button class="chip" aria-pressed="false" data-y="${esc(y)}">${esc(y)} 學年度</button>`).join('')}</div><div class="box" id="al"></div>`;
+};
+INIT.alum=function(){
+  if(!ALUMNI.length)return;
+  const draw=y=>{$('#al').innerHTML=ALUMNI.filter(a=>!y||a.y===y).map(a=>`<div class="honor"><span><b>${esc(maskName(a.n))}</b><br><span class="note">${esc(a.y)} 學年度畢業</span></span><span class="badge">${esc(a.inst||'')}${a.sex?'｜'+esc(a.sex):''}</span></div>`).join('')};
+  draw('');
+  $('#ay').addEventListener('click',ev=>{const b=ev.target.closest('[data-y]');if(!b)return;document.querySelectorAll('#ay .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));draw(b.dataset.y)});
+};
+const TEACHERS=[];   /* {n:'老師姓名', role:'小提琴一部分部老師', bio:'簡介'} — filled only after each teacher agrees */
+VIEWS.tch=function(){
+  return `<p>每個團有指揮老師，每個聲部有分部老師。孩子的琴，是老師們一步一步帶出來的。</p>
+  <div class="box"><h4>指揮老師</h4><p style="margin:6px 0 0">A、B、C 三個團各有一位指揮老師，帶全團一起呼吸、進拍子，站在台前帶大家完成演出。</p></div>
+  <div class="box" style="margin-top:10px"><h4>分部老師</h4><p style="margin:6px 0 0">小提琴、中提琴、大提琴等每個聲部，都有自己的老師。分部課時，一個聲部一個聲部地把細節練穩。</p></div>
+  ${TEACHERS.length?TEACHERS.map(t=>`<div class="box" style="margin-top:10px"><h4>${esc(t.n)}<span class="yr">　${esc(t.role||'')}</span></h4><p style="margin:6px 0 0">${esc(t.bio||'')}</p></div>`).join(''):`<div class="box" style="margin-top:10px"><h4>專業背景</h4><p style="margin:6px 0 0">老師們的學經歷與簡介整理中，經過老師同意後，會放在這裡。</p></div>`}
+  <p class="note" style="margin-top:12px">在「關於中和弦」裡，可以看到老師們和孩子、家長之間的關係。<button class="chip" data-go="net">去看看</button></p>`;
+};
+INIT.tch=function(){bindGo()};
+/* list view (the 清單 button) */
+VIEWS.list=function(){
+  const row=t=>{const i=TILES.indexOf(t);return `<button class="li" data-go="${t.id}"><span class="no">${String(i+1).padStart(2,'0')}</span><span><b>${t.name}</b>${STAMPS.has(t.id)?' <span class="ai">已探索</span>':''}<br><span class="note">${t.hint()}</span></span></button>`};
+  return `<p>島上有 ${ISLES.length} 座島、${TILES.length} 個地點。點一個，就會飛過去。</p>`+ISLES.map(s=>`<h3>${s.name}</h3><div class="list">${s.z.map(id=>row(TILES.find(t=>t.id===id))).join('')}</div>`).join('');
+};
+function bindGo(){
+  $('#sheet-body').onclick=ev=>{
+    const b=ev.target.closest('[data-go]');if(!b)return;
+    $('#veil').hidden=true;document.body.style.overflow='';lastFocus=null;openZone(b.dataset.go);
+  };
+}
+INIT.list=bindGo;
+{const _n=INIT.net;INIT.net=function(){_n();bindGo()}}
+
+/* volunteer station: pick roles, copy a message to paste into the LINE group (nothing is sent anywhere) */
+const ROLES=[
+  ['場佈・搬運','搬樂器、排譜架，還有大提琴椅子的位置'],
+  ['簽到接待','在門口迎接家長和來賓'],
+  ['攝影紀錄','幫孩子留下舞台上的樣子'],
+  ['妝髮','演出前幫孩子整理，例如綁馬尾'],
+  ['主持串場','介紹曲目、串起整場演出'],
+  ['點心補給','演出後讓孩子吃點東西'],
+  ['接送・帶隊','孩子要去洗手間或移動時，跟在旁邊'],
+  ['秩序・交通引導','維持會場動線，提醒大家安靜'],
+  ['場地復原','演出後收譜架、把場地還原'],
+  ['機動支援','哪裡缺人，就補去哪裡']
+];
+VIEWS.vol=function(){
+  const g=Math.max(1,GROW.vgoal),pc=Math.min(100,Math.round(GROW.v/g*100));
+  return `<div class="box"><h4>志工招募：${GROW.v} 位／目標 ${GROW.vgoal} 位</h4><div class="pbar"><i style="width:${pc}%"></i></div><p class="note" style="margin:6px 0 0">每多一位志工，家人島上就多一位志工小人。演出前一天，志工們會聚集到家人島。</p><button class="play" id="vinv" style="margin-top:8px">複製邀請文，轉貼給朋友</button><p class="note" id="vinvok" aria-live="polite" style="margin:6px 0 0"></p></div>
+  <p style="margin-top:12px">演出日，台下有一群家長在忙。想加入的話，先挑幾個有興趣的位置，一個也行。</p>
+  <div class="list" id="roles">${ROLES.map((r,i)=>`<label class="li role"><input type="checkbox" class="rk" value="${i}"><span><b>${r[0]}</b><br><span class="note">${r[1]}</span></span></label>`).join('')}</div>
+  <h3>寫一則訊息給後援會</h3>
+  <label class="note">怎麼稱呼你？<input id="vn" class="inp" style="margin-top:4px" placeholder="例如：小明媽媽"></label>
+  <label class="note" style="display:block;margin-top:8px">方便的時間（選填）<input id="vt" class="inp" style="margin-top:4px" placeholder="例如：演出日、平日晚上"></label>
+  <textarea id="vmsg" class="inp" rows="4" readonly style="margin-top:10px;padding:10px;min-height:96px">先勾選上面的位置。</textarea>
+  <button class="play" id="vcopy" style="width:100%;margin-top:8px">複製訊息</button>
+  <p class="note" id="vok" aria-live="polite">複製後，貼到後援會的 LINE 群組或粉專私訊就可以了。這裡不會收集你的任何資料。</p>`;
+};
+INIT.vol=function(){
+  $('#vinv').onclick=async()=>{
+    const t='中和弦後援會徵求志工！\n演出日需要場佈、簽到、攝影、點心補給等幫手，每個位置都歡迎，只幫一小段時間也很有幫助。\n點開「中和弦音樂島」的「志工小站」，勾選想幫忙的位置，就可以留言給我們。\n（請在這裡貼上音樂島的連結）';
+    let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){}
+    $('#vinvok').textContent=ok?'已複製！貼到 LINE 或粉專，再補上音樂島連結。':'沒辦法自動複製，請到後援會群組直接輸入邀請文。';
+  };
+  const build=()=>{
+    const picked=[...document.querySelectorAll('.rk:checked')].map(c=>ROLES[c.value][0]);
+    const n=$('#vn').value.trim(),t=$('#vt').value.trim();
+    $('#vmsg').value=picked.length?`您好，我是${n||'（請填稱呼）'}，想加入中和弦後援會當志工。\n我想幫忙的位置：${picked.join('、')}。${t?'\n方便的時間：'+t+'。':''}\n謝謝！`:'先勾選上面的位置。';
+  };
+  $('#roles').addEventListener('change',build);$('#vn').addEventListener('input',build);$('#vt').addEventListener('input',build);
+  $('#vcopy').onclick=async()=>{
+    const ta=$('#vmsg');if(!document.querySelector('.rk:checked')){$('#vok').textContent='請先勾選至少一個位置。';return}
+    let ok=false;try{await navigator.clipboard.writeText(ta.value);ok=true}catch(e){try{ta.removeAttribute('readonly');ta.select();ok=document.execCommand('copy');ta.setAttribute('readonly','')}catch(e2){}}
+    $('#vok').textContent=ok?'已複製！到後援會 LINE 群組貼上就好。':'沒辦法自動複製，請長按上面的文字，選「拷貝」。';
+  };
+};
+
+setLayout();buildScene();startWalkers();startNotes();
+/* ---------- wiring ---------- */
+$('#pills').addEventListener('click',ev=>{const p=ev.target.closest('.pill');if(p)openZone(p.dataset.id)});
+$('#pills').addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){const p=ev.target.closest('.pill');if(p){ev.preventDefault();openZone(p.dataset.id)}}});
+$('#banner').addEventListener('click',()=>openZone('dock'));
+$('#bAll').addEventListener('click',()=>{if(!$('#veil').hidden)closeSheet();$('#stage').scrollIntoView({behavior:'smooth',block:'start'})});
+$('#bGrow').addEventListener('click',()=>{lastFocus=document.activeElement;openSheet('grow')});
+$('#bList').addEventListener('click',()=>{lastFocus=document.activeElement;openSheet('list')});
+$('#bTime').addEventListener('click',()=>openZone('map'));
+$('#bMus').addEventListener('click',()=>musicSet(!mus.on));
+$('#bProg').addEventListener('click',()=>{lastFocus=document.activeElement;openSheet('list')});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&mus.on)musicSet(false)});
+updateProg();
+$('#close').addEventListener('click',closeSheet);
+$('#veil').addEventListener('click',ev=>{if(ev.target.id==='veil')closeSheet()});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#veil').hidden)closeSheet()});
+document.querySelectorAll('.simrow .chip').forEach(b=>b.addEventListener('click',()=>{SIM=b.dataset.s;renderPills();document.querySelectorAll('.simrow .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));applyState(false)}));
+document.querySelectorAll('.modes .chip').forEach(b=>b.addEventListener('click',()=>{
+  MODE=b.dataset.m;
+  document.querySelectorAll('.modes .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  refresh();
+}));
+$('#guide').addEventListener('click',ev=>{const b=ev.target.closest('[data-go]');if(b)openZone(b.dataset.go)});
+wideMQ.addEventListener('change',()=>{setLayout();regrow()});
+refresh();
+/* opening song: a different composer each visit; the browser only allows sound after a tap, so the tap on the welcome card starts it */
+(function(){
+  let v=0;try{v=+localStorage.getItem('zhx-visits')||0;localStorage.setItem('zhx-visits',String(v+1))}catch(e){v=Math.floor(Math.random()*5)}
+  const c=COMPOSERS[v%5];
+  $('#wTitle').textContent=c.n+'　'+c.mt;
+  if(NEWDAY&&GL.mine>0)$('#wGrow').textContent='今天，你的小樹長出來了（第 '+MYDAYS.length+' 天）';
+  const w=$('#welcome'),close=()=>{w.hidden=true;document.body.style.overflow=''};
+  document.body.style.overflow='hidden';
+  $('#wGo').addEventListener('click',()=>{close();playMel(c.mel,c.bpm)});
+  $('#wMute').addEventListener('click',close);
+  $('#wGo').focus();
+})();
+FAQ.push({k:['老師','師資','指揮','分部老師','專業'],a:'每個團有指揮老師，每個聲部有分部老師。想認識老師們，可以點島上的「師資團隊」，老師們的簡介經過同意後會放上去。'});
+FAQ.push({k:['成長','森林','變茂密','小樹','人氣','小旅人','等級'],a:'這座島會成長：全團練習分鐘累積越多，樹越多（每 10,000 分鐘一棵）；想加入的朋友越多，島上的新朋友越多。每天打開一次，同心島也會長出一棵你的小樹。點右上方工具列的「成長」可以看。'});
+</script>
+
+</body>
+</html>
